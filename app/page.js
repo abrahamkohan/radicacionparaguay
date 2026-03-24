@@ -55,7 +55,7 @@ export default function RadicacionPYLanding() {
     azul_info: '#0066CC',
     rojo_claro: '#E8F0FF',
     gris_oscuro: '#2c3e50',
-    bg: '#f8f9fa'
+    bg: '#e6e8eb'
   };
 
   const paises = [
@@ -129,7 +129,6 @@ export default function RadicacionPYLanding() {
       setAdvertencias(nuevasAdvertencias);
     }
 
-    // Calcular progreso del formulario
     const campos = [formData.nombre, formData.nacionalidad !== 'Selecciona tu país', formData.paisResidencia, formData.edad, formData.estadoCivil];
     const documentosLlenados = Object.values(formData.documentos).filter(v => v).length;
     const totalCampos = campos.filter(Boolean).length + (documentosLlenados > 0 ? 1 : 0);
@@ -213,11 +212,9 @@ export default function RadicacionPYLanding() {
       minHeight: '100vh', 
       background: COLORES.bg, 
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-      color: COLORES.gris_oscuro,
-      paddingBottom: '40px'
+      color: COLORES.gris_oscuro
     }}>
       
-      {/* Script Lineicons */}
       <script src="https://cdn.lineicons.com/web/1.0.0/lineicons.js"></script>
 
       {/* Navbar con Glass effect */}
@@ -272,7 +269,8 @@ export default function RadicacionPYLanding() {
       <main style={{
         maxWidth: '900px',
         margin: '0 auto',
-        padding: '32px 16px 48px 16px',
+        padding: '32px 16px',
+        paddingBottom: '120px'
       }}>
         
         {/* Header con animación */}
@@ -933,12 +931,51 @@ export default function RadicacionPYLanding() {
             </div>
           )}
 
-          {/* Botón WhatsApp - iOS Style */}
+          <div style={{ height: '40px' }}></div>
+        </div>
+
+        {/* Footer */}
+        <div style={{
+          textAlign: 'center',
+          color: COLORES.gris_medio,
+          fontSize: '12px',
+          paddingTop: '24px',
+          borderTop: '1px solid rgba(0,0,0,0.08)',
+          marginBottom: '40px'
+        }}>
+          <p style={{ margin: '0 0 8px 0', fontWeight: '600' }}>© 2026 Abraham Kohan</p>
+          <p style={{ margin: 0, fontSize: '11px', opacity: '0.7' }}>
+            Evaluación informativa basada en Ley Nº 6984/22
+          </p>
+        </div>
+      </main>
+
+      {/* Fixed Button */}
+      <div style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        background: '#ffffff',
+        boxShadow: '0 -4px 12px rgba(0,0,0,0.08)',
+        paddingTop: '16px',
+        paddingBottom: `calc(16px + env(safe-area-inset-bottom))`,
+        zIndex: 99,
+        paddingLeft: '16px',
+        paddingRight: '16px'
+      }}>
+        <div style={{
+          maxWidth: '900px',
+          margin: '0 auto',
+          display: 'flex',
+          justifyContent: 'center'
+        }}>
           <button
             onClick={generarMensajeWhatsApp}
             disabled={!formularioCompleto}
             style={{
               width: '100%',
+              maxWidth: '520px',
               minHeight: '56px',
               padding: '16px 20px',
               background: formularioCompleto 
@@ -958,8 +995,7 @@ export default function RadicacionPYLanding() {
               letterSpacing: '0.3px',
               boxShadow: formularioCompleto 
                 ? '0 8px 24px rgba(39, 174, 96, 0.3)' 
-                : 'none',
-              animation: 'fadeInUp 0.6s ease-out 0.3s both'
+                : 'none'
             }}
             onMouseEnter={(e) => {
               if (formularioCompleto) {
@@ -977,63 +1013,41 @@ export default function RadicacionPYLanding() {
             <i style={{ fontSize: '18px' }} className="lni lni-whatsapp"></i>
             Enviar a mi Gestor por WhatsApp
           </button>
-
-          <div style={{
-            fontSize: '12px',
-            color: COLORES.gris_medio,
-            textAlign: 'center',
-            marginTop: '14px',
-            fontWeight: '500'
-          }}>
-            {formularioCompleto ? '✓ Listo para enviar' : 'Completa todos los campos requeridos'}
-          </div>
         </div>
+      </div>
 
-        {/* Success Message */}
-        {showSuccess && (
-          <div style={{
-            position: 'fixed',
-            bottom: '24px',
-            left: '16px',
-            right: '16px',
-            background: `linear-gradient(135deg, ${COLORES.verde}, #229954)`,
-            color: 'white',
-            padding: '16px 20px',
-            borderRadius: '14px',
-            fontSize: '14px',
-            fontWeight: '700',
-            boxShadow: '0 12px 40px rgba(39, 174, 96, 0.3)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            animation: 'slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
-            maxWidth: '600px',
-            margin: '0 auto',
-            zIndex: 1000
-          }}>
-            <i style={{ fontSize: '20px', minWidth: '20px' }} className="lni lni-checkmark-circle"></i>
-            <div>
-              <strong>¡Mensaje enviado!</strong>
-              <div style={{ fontSize: '12px', opacity: '0.9' }}>Revisa tu WhatsApp ahora</div>
-            </div>
-          </div>
-        )}
-
-        {/* Footer */}
+      {/* Success Message */}
+      {showSuccess && (
         <div style={{
-          textAlign: 'center',
-          color: COLORES.gris_medio,
-          fontSize: '12px',
-          marginTop: '48px',
-          paddingTop: '24px',
-          borderTop: '1px solid #e0e0e0'
+          position: 'fixed',
+          bottom: '100px',
+          left: '16px',
+          right: '16px',
+          background: `linear-gradient(135deg, ${COLORES.verde}, #229954)`,
+          color: 'white',
+          padding: '16px 20px',
+          borderRadius: '14px',
+          fontSize: '14px',
+          fontWeight: '700',
+          boxShadow: '0 12px 40px rgba(39, 174, 96, 0.3)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          animation: 'slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          maxWidth: '520px',
+          margin: '0 auto',
+          zIndex: 1000,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 'calc(100% - 32px)'
         }}>
-          <p style={{ margin: '0 0 8px 0', fontWeight: '600' }}>© 2025 Paraguay Migraciones</p>
-          <p style={{ margin: 0, fontSize: '11px', opacity: '0.7' }}>
-            Evaluación informativa basada en Ley Nº 6984/22
-          </p>
+          <i style={{ fontSize: '20px', minWidth: '20px' }} className="lni lni-checkmark-circle"></i>
+          <div>
+            <strong>¡Mensaje enviado!</strong>
+            <div style={{ fontSize: '12px', opacity: '0.9' }}>Revisa tu WhatsApp ahora</div>
+          </div>
         </div>
-      </main>
+      )}
 
       <style>{`
         @keyframes fadeInDown {
@@ -1061,11 +1075,11 @@ export default function RadicacionPYLanding() {
         @keyframes slideUp {
           from {
             opacity: 0;
-            transform: translateY(100px);
+            transform: translateX(-50%) translateY(100px);
           }
           to {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateX(-50%) translateY(0);
           }
         }
         
