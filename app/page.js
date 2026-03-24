@@ -23,8 +23,8 @@ export default function RadicacionPYLanding() {
       pasaporte: null,
       nacimiento: null,
       antecedentes: null,
-      matrimonio: null
-      foto: null
+      matrimonio: null,
+      foto: null,
     }
   });
 
