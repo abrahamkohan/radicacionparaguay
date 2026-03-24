@@ -214,7 +214,7 @@ export default function RadicacionPYLanding() {
         }}>
           <div>
             <div style={{
-              fontSize: '13px',
+              fontSize: '18px',
               fontWeight: '700',
               color: COLORES.rojo,
               letterSpacing: '1px',
@@ -244,7 +244,7 @@ export default function RadicacionPYLanding() {
           marginBottom: '48px'
         }}>
           <h1 style={{
-            fontSize: '42px',
+            fontSize: '36px',
             fontWeight: '700',
             color: COLORES.navy,
             margin: '0 0 16px 0',
