@@ -269,7 +269,7 @@ export default function RadicacionPYLanding() {
             margin: '0 auto',
             lineHeight: '1.6'
           }}>
-            Completa este formulario para determinar tu categoría migratoria, requisitos y costos oficiales actualizados al 2025 [1, 2].
+            Completa este formulario para identificar tu tipo de radicación y la documentación requerida.
           </p>
         </div>
 
