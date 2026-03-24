@@ -254,13 +254,13 @@ export default function RadicacionPYLanding() {
           marginBottom: '48px'
         }}>
           <h1 style={{
-            fontSize: '42px',
+            fontSize: '36px',
             fontWeight: '700',
             color: COLORES.navy,
             margin: '0 0 16px 0',
             lineHeight: '1.2'
           }}>
-            Inicia tu Radicación con Seguridad Jurídica
+            Inicia tu Radicación en Paraguay
           </h1>
           <p style={{
             fontSize: '16px',
