@@ -78,7 +78,7 @@ export default function RadicacionPYLanding() {
         formData.nacionalidad.includes('Bolivia');
 
       if (esMercosur) {
-        arancel = ';
+        arancel = '';
         tipoRadicacion = 'Mercosur';
       } else {
         arancel = '';
