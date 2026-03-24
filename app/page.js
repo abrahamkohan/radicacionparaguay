@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { FileUp, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function RadicacionPYLanding() {
   const [formData, setFormData] = useState({
@@ -38,6 +37,7 @@ export default function RadicacionPYLanding() {
   const [clasificacion, setClasificacion] = useState(null);
   const [aranceles, setAranceles] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [formProgress, setFormProgress] = useState(0);
 
   const GESTOR_CONFIG = {
     nombre: 'Abraham Kohan',
@@ -47,13 +47,15 @@ export default function RadicacionPYLanding() {
   };
 
   const COLORES = {
-    rojo: '#C41E3A',
+    rojo: '#0066CC',
     navy: '#1a3a52',
     verde: '#27AE60',
     gris_claro: '#f5f5f5',
     gris_medio: '#999999',
-    azul_info: '#2196F3',
-    rojo_claro: '#FEE5E7'
+    azul_info: '#0066CC',
+    rojo_claro: '#E8F0FF',
+    gris_oscuro: '#2c3e50',
+    bg: '#f8f9fa'
   };
 
   const paises = [
@@ -69,71 +71,20 @@ export default function RadicacionPYLanding() {
     'Otro País (Ley General)'
   ];
 
-  // Documentos por tipo de radicación
   const documentosPorTipo = {
     nuevo: [
-      { 
-        key: 'pasaporte', 
-        label: 'DNI, ID o Pasaporte Vigente',
-        desc: 'Fotografía frente y dorso',
-        accept: '.pdf,.jpg,.jpeg,.png'
-      },
-      { 
-        key: 'nacimiento', 
-        label: 'Nacimiento Apostillado',
-        desc: 'Obligatorio por Convención de La Haya',
-        accept: '.pdf,.jpg,.jpeg,.png'
-      },
-      { 
-        key: 'antecedentes', 
-        label: 'Antecedentes Apostillados',
-        desc: 'Solo si eres mayor de 14 años',
-        accept: '.pdf,.jpg,.jpeg,.png'
-      },
-      { 
-        key: 'matrimonio', 
-        label: 'Certificado de Matrimonio/Divorcio',
-        desc: 'Solo si no eres soltero/a',
-        accept: '.pdf,.jpg,.jpeg,.png'
-      },
-      { 
-        key: 'foto', 
-        label: 'Foto Carnet',
-        desc: 'Digital, sacada con celular para uso interno',
-        accept: '.jpg,.jpeg,.png'
-      },
+      { key: 'pasaporte', label: 'DNI, ID o Pasaporte Vigente', desc: 'Debe ser original', icon: '📋', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'nacimiento', label: 'Nacimiento Apostillado', desc: 'Obligatorio por Convención de La Haya', icon: '📄', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'antecedentes', label: 'Antecedentes Apostillados', desc: 'Solo si eres mayor de 14 años', icon: '🔍', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'matrimonio', label: 'Certificado de Matrimonio/Divorcio', desc: 'Solo si no eres soltero/a', icon: '💍', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'foto', label: 'Foto Carnet', desc: 'Sacada con celular, solo para uso interno', icon: '📸', accept: '.jpg,.jpeg,.png' },
     ],
     permanente: [
-      { 
-        key: 'pasaporte', 
-        label: 'DNI o Pasaporte Vigente',
-        desc: 'Debe estar vigente',
-        accept: '.pdf,.jpg,.jpeg,.png'
-      },
-      { 
-        key: 'foto', 
-        label: 'Foto Tipo Carnet',
-        desc: 'Digital, sacada con celular para uso interno',
-        accept: '.jpg,.jpeg,.png'
-      },
-      { 
-        key: 'ruc', 
-        label: 'RUC / Libros de Actas O Título Universitario',
-        desc: 'Para demostrar Solvencia en el Pais (Paraguay)',
-        accept: '.pdf,.jpg,.jpeg,.png'
-      },
-      { 
-        key: 'carnetParaguayo', 
-        label: 'Carnet de Admisión Temporal Paraguaya',
-        desc: 'Fotografía frente y dorso',
-        accept: '.pdf,.jpg,.jpeg,.png'
-      },
-      { 
-        key: 'cedulaParaguaya', 
-        label: 'Cédula Paraguaya',
-        desc: 'Fotografía frente y dorso',
-        accept: '.pdf,.jpg,.jpeg,.png'
-      },
+      { key: 'pasaporte', label: 'DNI o Pasaporte Vigente', desc: 'Debe estar vigente', icon: '📋', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'foto', label: 'Foto Tipo Carnet', desc: 'Digital, sacada con celular', icon: '📸', accept: '.jpg,.jpeg,.png' },
+      { key: 'ruc', label: 'RUC / Libros de Actas O Título Universitario', desc: 'Apostillado si es título profesional', icon: '🏢', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'carnetParaguayo', label: 'Carnet de Admisión Temporal Paraguaya', icon: '🪪', desc: 'Vigente y en buen estado', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'cedulaParaguaya', label: 'Cédula Paraguaya', desc: 'Opcional, si ya cuenta con ella', icon: '🆔', accept: '.pdf,.jpg,.jpeg,.png' },
     ]
   };
 
@@ -149,33 +100,19 @@ export default function RadicacionPYLanding() {
         formData.nacionalidad.includes('Uruguay') ||
         formData.nacionalidad.includes('Bolivia');
 
-      if (esMercosur) {
-        arancel = '';
-        tipoRadicacion = 'Mercosur';
-      } else {
-        arancel = '';
-        tipoRadicacion = 'Ley General';
-      }
+      tipoRadicacion = esMercosur ? 'Mercosur' : 'Ley General';
+      arancel = '';
 
       if (formData.nacionalidad !== 'Brasil (Mercosur)') {
-        nuevasAdvertencias.push({
-          tipo: 'traduccion',
-          texto: '⚠️ Requiere Traducción Jurada de documentos (excepto Brasil)'
-        });
+        nuevasAdvertencias.push({ tipo: 'traduccion', texto: '⚠️ Requiere Traducción Jurada de documentos (excepto Brasil)' });
       }
 
       if (parseInt(formData.edad) < 14) {
-        nuevasAdvertencias.push({
-          tipo: 'antecedentes',
-          texto: '✓ Exento de Antecedentes Penales (menor de 14 años)'
-        });
+        nuevasAdvertencias.push({ tipo: 'antecedentes', texto: '✓ Exento de Antecedentes Penales (menor de 14 años)' });
       }
 
       if (formData.estadoCivil !== 'Soltero/a') {
-        nuevasAdvertencias.push({
-          tipo: 'matrimonio',
-          texto: '⚠️ Certificado de ' + formData.estadoCivil + ' debe estar apostillado y legalizado'
-        });
+        nuevasAdvertencias.push({ tipo: 'matrimonio', texto: '⚠️ Certificado de ' + formData.estadoCivil + ' debe estar apostillado y legalizado' });
       }
 
       if (formData.carnetTemporal) {
@@ -191,7 +128,13 @@ export default function RadicacionPYLanding() {
       setAranceles(arancel);
       setAdvertencias(nuevasAdvertencias);
     }
-  }, [formData.nacionalidad, formData.edad, formData.estadoCivil, formData.carnetTemporal, formData.esInversor]);
+
+    // Calcular progreso del formulario
+    const campos = [formData.nombre, formData.nacionalidad !== 'Selecciona tu país', formData.paisResidencia, formData.edad, formData.estadoCivil];
+    const documentosLlenados = Object.values(formData.documentos).filter(v => v).length;
+    const totalCampos = campos.filter(Boolean).length + (documentosLlenados > 0 ? 1 : 0);
+    setFormProgress(Math.round((totalCampos / 6) * 100));
+  }, [formData]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -266,14 +209,27 @@ export default function RadicacionPYLanding() {
     Object.values(formData.documentos).some(v => v);
 
   return (
-    <div style={{ minHeight: '100vh', background: '#ffffff', fontFamily: "'Segoe UI', 'Helvetica Neue', sans-serif", color: COLORES.navy }}>
+    <div style={{ 
+      minHeight: '100vh', 
+      background: COLORES.bg, 
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+      color: COLORES.gris_oscuro,
+      paddingBottom: '40px'
+    }}>
       
-      {/* Navbar */}
+      {/* Script Lineicons */}
+      <script src="https://cdn.lineicons.com/web/1.0.0/lineicons.js"></script>
+
+      {/* Navbar con Glass effect */}
       <nav style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
         padding: '16px',
-        borderBottom: `3px solid ${COLORES.rojo}`,
-        background: '#ffffff',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: `1px solid rgba(0, 0, 0, 0.06)`,
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
       }}>
         <div style={{
           maxWidth: '900px',
@@ -283,11 +239,30 @@ export default function RadicacionPYLanding() {
           justifyContent: 'space-between',
           padding: '0 16px'
         }}>
-          <div style={{ fontSize: '16px', fontWeight: '700', letterSpacing: '1px' }}>
-            <span style={{ color: COLORES.rojo }}>PARAGUAY</span>{' '}
-            <span style={{ color: COLORES.navy }}>MIGRACIONES</span>
+          <div style={{ 
+            fontSize: '16px', 
+            fontWeight: '700', 
+            letterSpacing: '0.5px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <i style={{ fontSize: '20px', color: COLORES.rojo }} className="lni lni-passport"></i>
+            <span>
+              <span style={{ color: COLORES.rojo }}>PARAGUAY</span>
+              <br style={{ display: 'none' }} />
+              <span style={{ color: COLORES.navy }}> MIGRACIONES</span>
+            </span>
           </div>
-          <div style={{ fontSize: '11px', color: COLORES.gris_medio, fontWeight: '500' }}>
+          <div style={{ 
+            fontSize: '11px', 
+            color: COLORES.gris_medio, 
+            fontWeight: '600',
+            backgroundColor: 'rgba(0, 102, 204, 0.1)',
+            padding: '4px 10px',
+            borderRadius: '12px',
+            letterSpacing: '0.3px'
+          }}>
             Ley Nº 6984/22
           </div>
         </div>
@@ -300,58 +275,102 @@ export default function RadicacionPYLanding() {
         padding: '32px 16px 48px 16px',
       }}>
         
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        {/* Header con animación */}
+        <div style={{ 
+          textAlign: 'center', 
+          marginBottom: '40px',
+          animation: 'fadeInDown 0.6s ease-out'
+        }}>
           <h1 style={{
-            fontSize: 'clamp(24px, 8vw, 36px)',
-            fontWeight: '700',
-            color: COLORES.navy,
-            margin: '0 0 16px 0',
-            lineHeight: '1.2'
+            fontSize: 'clamp(28px, 7vw, 42px)',
+            fontWeight: '800',
+            color: COLORES.gris_oscuro,
+            margin: '0 0 12px 0',
+            lineHeight: '1.2',
+            letterSpacing: '-0.5px'
           }}>
-            Inicia tu Radicación en Paraguay
+            Tu Radicación en Paraguay
           </h1>
           <p style={{
             fontSize: '16px',
             color: COLORES.gris_medio,
             maxWidth: '600px',
             margin: '0 auto',
-            lineHeight: '1.6'
+            lineHeight: '1.6',
+            fontWeight: '500'
           }}>
-            Completa este formulario para identificar tu tipo de radicación y la documentación requerida.
+            Completa tu evaluación y obtén la documentación exacta que necesitas
           </p>
         </div>
 
-        {/* Form Container */}
+        {/* Progress Bar */}
+        <div style={{
+          marginBottom: '32px',
+          animation: 'fadeInUp 0.6s ease-out 0.1s both'
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginBottom: '8px'
+          }}>
+            <span style={{ fontSize: '12px', fontWeight: '600', color: COLORES.gris_medio }}>Progreso del formulario</span>
+            <span style={{ fontSize: '12px', fontWeight: '700', color: COLORES.navy }}>{formProgress}%</span>
+          </div>
+          <div style={{
+            width: '100%',
+            height: '6px',
+            background: '#e0e0e0',
+            borderRadius: '3px',
+            overflow: 'hidden',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+          }}>
+            <div style={{
+              height: '100%',
+              width: `${formProgress}%`,
+              background: `linear-gradient(90deg, ${COLORES.verde}, ${COLORES.rojo})`,
+              transition: 'width 0.3s ease-out',
+              borderRadius: '3px'
+            }}/>
+          </div>
+        </div>
+
+        {/* Form Container - iOS Card Style */}
         <div style={{
           background: '#ffffff',
-          border: `1px solid #e0e0e0`,
-          borderRadius: '12px',
+          borderRadius: '20px',
           padding: 'clamp(20px, 5vw, 40px)',
-          marginBottom: '32px'
+          marginBottom: '32px',
+          boxShadow: '0 10px 40px rgba(0, 0, 0, 0.08)',
+          animation: 'fadeInUp 0.6s ease-out 0.2s both'
         }}>
           
           {/* Sección 1: Datos Básicos */}
           <div style={{ marginBottom: '40px' }}>
             <h2 style={{
-              fontSize: '18px',
-              fontWeight: '700',
-              color: COLORES.navy,
+              fontSize: '20px',
+              fontWeight: '800',
+              color: COLORES.gris_oscuro,
               margin: '0 0 24px 0',
               paddingBottom: '12px',
-              borderBottom: `2px solid ${COLORES.gris_claro}`
+              borderBottom: `2px solid ${COLORES.gris_claro}`,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px'
             }}>
+              <i style={{ fontSize: '24px', color: COLORES.navy }} className="lni lni-user"></i>
               Datos Personales
             </h2>
 
-            {/* Nombre - Full width */}
-            <div style={{ marginBottom: '24px' }}>
+            {/* Nombre */}
+            <div style={{ marginBottom: '20px', animation: 'fadeInUp 0.6s ease-out 0.3s both' }}>
               <label style={{ 
                 display: 'block', 
                 fontSize: '13px', 
-                fontWeight: '600',
-                color: COLORES.navy,
-                marginBottom: '8px'
+                fontWeight: '700',
+                color: COLORES.gris_oscuro,
+                marginBottom: '8px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
               }}>
                 Nombre Completo
               </label>
@@ -363,37 +382,46 @@ export default function RadicacionPYLanding() {
                 placeholder="Tu nombre completo"
                 style={{
                   width: '100%',
-                  padding: '12px 14px',
-                  minHeight: '44px',
-                  border: `1px solid #ddd`,
-                  borderRadius: '8px',
+                  padding: '14px 16px',
+                  minHeight: '48px',
+                  border: `1.5px solid #e0e0e0`,
+                  borderRadius: '12px',
                   fontSize: '16px',
                   fontFamily: 'inherit',
                   boxSizing: 'border-box',
-                  transition: 'border 0.2s'
+                  transition: 'all 0.3s ease',
+                  background: '#fafbfc'
                 }}
-                onFocus={(e) => e.target.style.borderColor = COLORES.rojo}
-                onBlur={(e) => e.target.style.borderColor = '#ddd'}
+                onFocus={(e) => {
+                  e.target.style.borderColor = COLORES.rojo;
+                  e.target.style.background = '#ffffff';
+                  e.target.style.boxShadow = `0 8px 24px rgba(0, 102, 204, 0.1)`;
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#e0e0e0';
+                  e.target.style.background = '#fafbfc';
+                  e.target.style.boxShadow = 'none';
+                }}
               />
             </div>
 
-            {/* Grid: Nacionalidad + Residencia - responsive */}
+            {/* Grid: Nacionalidad + Residencia */}
             <div style={{ 
               display: 'grid', 
-              gridTemplateColumns: '1fr', 
-              gap: '20px', 
+              gridTemplateColumns: '1fr',
+              gap: '20px',
               marginBottom: '20px',
-              '@media (min-width: 768px)': {
-                gridTemplateColumns: '1fr 1fr'
-              }
+              '@media (min-width: 768px)': { gridTemplateColumns: '1fr 1fr' }
             }}>
-              <div>
+              <div style={{ animation: 'fadeInUp 0.6s ease-out 0.4s both' }}>
                 <label style={{ 
                   display: 'block', 
                   fontSize: '13px', 
-                  fontWeight: '600',
-                  color: COLORES.navy,
-                  marginBottom: '8px'
+                  fontWeight: '700',
+                  color: COLORES.gris_oscuro,
+                  marginBottom: '8px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
                 }}>
                   Nacionalidad
                 </label>
@@ -403,19 +431,27 @@ export default function RadicacionPYLanding() {
                   onChange={handleInputChange}
                   style={{
                     width: '100%',
-                    padding: '12px 14px',
-                    minHeight: '44px',
-                    border: `2px solid #ddd`,
-                    borderRadius: '8px',
+                    padding: '14px 16px',
+                    minHeight: '48px',
+                    border: `1.5px solid #e0e0e0`,
+                    borderRadius: '12px',
                     fontSize: '16px',
                     fontFamily: 'inherit',
-                    backgroundColor: 'white',
+                    backgroundColor: '#fafbfc',
                     cursor: 'pointer',
                     boxSizing: 'border-box',
-                    transition: 'border 0.2s'
+                    transition: 'all 0.3s ease'
                   }}
-                  onFocus={(e) => e.target.style.borderColor = COLORES.rojo}
-                  onBlur={(e) => e.target.style.borderColor = '#ddd'}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = COLORES.rojo;
+                    e.target.style.background = '#ffffff';
+                    e.target.style.boxShadow = `0 8px 24px rgba(0, 102, 204, 0.1)`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#e0e0e0';
+                    e.target.style.background = '#fafbfc';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 >
                   {paises.map(pais => (
                     <option key={pais} value={pais}>{pais}</option>
@@ -423,55 +459,65 @@ export default function RadicacionPYLanding() {
                 </select>
               </div>
 
-              <div>
+              <div style={{ animation: 'fadeInUp 0.6s ease-out 0.5s both' }}>
                 <label style={{ 
                   display: 'block', 
                   fontSize: '13px', 
-                  fontWeight: '600',
-                  color: COLORES.navy,
-                  marginBottom: '8px'
+                  fontWeight: '700',
+                  color: COLORES.gris_oscuro,
+                  marginBottom: '8px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
                 }}>
-                  País de Residencia Actual
+                  País de Residencia
                 </label>
                 <input
                   type="text"
                   name="paisResidencia"
                   value={formData.paisResidencia}
                   onChange={handleInputChange}
-                  placeholder="Dónde vives ahora"
+                  placeholder="Dónde vives"
                   style={{
                     width: '100%',
-                    padding: '12px 14px',
-                    minHeight: '44px',
-                    border: `1px solid #ddd`,
-                    borderRadius: '8px',
+                    padding: '14px 16px',
+                    minHeight: '48px',
+                    border: `1.5px solid #e0e0e0`,
+                    borderRadius: '12px',
                     fontSize: '16px',
                     fontFamily: 'inherit',
                     boxSizing: 'border-box',
-                    transition: 'border 0.2s'
+                    transition: 'all 0.3s ease',
+                    background: '#fafbfc'
                   }}
-                  onFocus={(e) => e.target.style.borderColor = COLORES.rojo}
-                  onBlur={(e) => e.target.style.borderColor = '#ddd'}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = COLORES.rojo;
+                    e.target.style.background = '#ffffff';
+                    e.target.style.boxShadow = `0 8px 24px rgba(0, 102, 204, 0.1)`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#e0e0e0';
+                    e.target.style.background = '#fafbfc';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 />
               </div>
             </div>
 
-            {/* Grid: Edad + Estado Civil - responsive */}
+            {/* Grid: Edad + Estado Civil */}
             <div style={{ 
               display: 'grid', 
               gridTemplateColumns: '1fr',
-              gap: '20px',
-              '@media (min-width: 768px)': {
-                gridTemplateColumns: '1fr 1fr'
-              }
+              gap: '20px'
             }}>
-              <div>
+              <div style={{ animation: 'fadeInUp 0.6s ease-out 0.6s both' }}>
                 <label style={{ 
                   display: 'block', 
                   fontSize: '13px', 
-                  fontWeight: '600',
-                  color: COLORES.navy,
-                  marginBottom: '8px'
+                  fontWeight: '700',
+                  color: COLORES.gris_oscuro,
+                  marginBottom: '8px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
                 }}>
                   Edad
                 </label>
@@ -485,27 +531,38 @@ export default function RadicacionPYLanding() {
                   max="120"
                   style={{
                     width: '100%',
-                    padding: '12px 14px',
-                    minHeight: '44px',
-                    border: `1px solid #ddd`,
-                    borderRadius: '8px',
+                    padding: '14px 16px',
+                    minHeight: '48px',
+                    border: `1.5px solid #e0e0e0`,
+                    borderRadius: '12px',
                     fontSize: '16px',
                     fontFamily: 'inherit',
                     boxSizing: 'border-box',
-                    transition: 'border 0.2s'
+                    transition: 'all 0.3s ease',
+                    background: '#fafbfc'
                   }}
-                  onFocus={(e) => e.target.style.borderColor = COLORES.rojo}
-                  onBlur={(e) => e.target.style.borderColor = '#ddd'}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = COLORES.rojo;
+                    e.target.style.background = '#ffffff';
+                    e.target.style.boxShadow = `0 8px 24px rgba(0, 102, 204, 0.1)`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#e0e0e0';
+                    e.target.style.background = '#fafbfc';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 />
               </div>
 
-              <div>
+              <div style={{ animation: 'fadeInUp 0.6s ease-out 0.7s both' }}>
                 <label style={{ 
                   display: 'block', 
                   fontSize: '13px', 
-                  fontWeight: '600',
-                  color: COLORES.navy,
-                  marginBottom: '8px'
+                  fontWeight: '700',
+                  color: COLORES.gris_oscuro,
+                  marginBottom: '8px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
                 }}>
                   Estado Civil
                 </label>
@@ -515,19 +572,27 @@ export default function RadicacionPYLanding() {
                   onChange={handleInputChange}
                   style={{
                     width: '100%',
-                    padding: '12px 14px',
-                    minHeight: '44px',
-                    border: `1px solid #ddd`,
-                    borderRadius: '8px',
+                    padding: '14px 16px',
+                    minHeight: '48px',
+                    border: `1.5px solid #e0e0e0`,
+                    borderRadius: '12px',
                     fontSize: '16px',
                     fontFamily: 'inherit',
-                    backgroundColor: 'white',
+                    backgroundColor: '#fafbfc',
                     cursor: 'pointer',
                     boxSizing: 'border-box',
-                    transition: 'border 0.2s'
+                    transition: 'all 0.3s ease'
                   }}
-                  onFocus={(e) => e.target.style.borderColor = COLORES.rojo}
-                  onBlur={(e) => e.target.style.borderColor = '#ddd'}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = COLORES.rojo;
+                    e.target.style.background = '#ffffff';
+                    e.target.style.boxShadow = `0 8px 24px rgba(0, 102, 204, 0.1)`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#e0e0e0';
+                    e.target.style.background = '#fafbfc';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 >
                   <option value="">Selecciona</option>
                   <option value="Soltero/a">Soltero/a</option>
@@ -541,177 +606,175 @@ export default function RadicacionPYLanding() {
 
           {/* Sección 2: Calificación */}
           <div style={{ 
-            background: COLORES.rojo_claro,
+            background: `linear-gradient(135deg, ${COLORES.rojo_claro}, rgba(0, 102, 204, 0.05))`,
             border: `2px solid ${COLORES.rojo}`,
-            borderRadius: '12px',
-            padding: '24px 20px',
-            marginBottom: '40px'
+            borderRadius: '16px',
+            padding: '28px 20px',
+            marginBottom: '40px',
+            animation: 'fadeInUp 0.6s ease-out 0.8s both'
           }}>
             <h3 style={{
-              fontSize: '16px',
-              fontWeight: '700',
+              fontSize: '18px',
+              fontWeight: '800',
               color: COLORES.rojo,
-              margin: '0 0 20px 0',
+              margin: '0 0 24px 0',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              gap: '10px'
             }}>
-              🏛️ Calificación del Trámite
+              <i style={{ fontSize: '24px' }} className="lni lni-briefcase"></i>
+              Tipo de Radicación
             </h3>
 
-            <div style={{ display: 'grid', gap: '16px' }}>
-              <div>
-                <label style={{
+            <div style={{ display: 'grid', gap: '14px' }}>
+              {[
+                { label: 'No tengo Carnet (Nuevo)', value: false },
+                { label: 'Sí tengo Carnet (Permanente)', value: true }
+              ].map((opt, idx) => (
+                <label key={idx} style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '12px',
                   cursor: 'pointer',
-                  fontWeight: '500',
+                  fontWeight: '600',
                   fontSize: '15px',
-                  padding: '10px',
-                  borderRadius: '8px',
-                  transition: 'background 0.2s',
+                  padding: '12px 14px',
+                  borderRadius: '12px',
+                  transition: 'all 0.2s ease',
+                  background: formData.carnetTemporal === opt.value ? 'rgba(0, 102, 204, 0.1)' : 'transparent',
+                  border: formData.carnetTemporal === opt.value ? `1.5px solid ${COLORES.rojo}` : '1.5px solid transparent'
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.05)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                onMouseEnter={(e) => {
+                  if (formData.carnetTemporal !== opt.value) {
+                    e.currentTarget.style.background = 'rgba(0,0,0,0.02)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (formData.carnetTemporal !== opt.value) {
+                    e.currentTarget.style.background = 'transparent';
+                  }
+                }}
                 >
                   <input
                     type="radio"
-                    name="carnetTemporal"
-                    checked={!formData.carnetTemporal}
-                    onChange={() => setFormData(prev => ({ ...prev, carnetTemporal: false }))}
-                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: COLORES.azul_info, minWidth: '18px' }}
+                    checked={formData.carnetTemporal === opt.value}
+                    onChange={() => setFormData(prev => ({ ...prev, carnetTemporal: opt.value }))}
+                    style={{ width: '20px', height: '20px', cursor: 'pointer', accentColor: COLORES.rojo, minWidth: '20px' }}
                   />
-                  <span>No tengo Carnet de Admisión Temporal (Nuevo)</span>
+                  <span>{opt.label}</span>
                 </label>
-              </div>
-
-              <div>
-                <label style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  cursor: 'pointer',
-                  fontWeight: '500',
-                  fontSize: '15px',
-                  padding: '10px',
-                  borderRadius: '8px',
-                  transition: 'background 0.2s',
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.05)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                >
-                  <input
-                    type="radio"
-                    name="carnetTemporal"
-                    checked={formData.carnetTemporal}
-                    onChange={() => setFormData(prev => ({ ...prev, carnetTemporal: true }))}
-                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: COLORES.azul_info, minWidth: '18px' }}
-                  />
-                  <span>Sí tengo Carnet (Pasando a Permanente)</span>
-                </label>
-              </div>
-
-              <div>
-                <label style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  cursor: 'pointer',
-                  fontWeight: '500',
-                  fontSize: '15px',
-                  padding: '10px',
-                  borderRadius: '8px',
-                  transition: 'background 0.2s',
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.05)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                >
-                  <input
-                    type="checkbox"
-                    name="esInversor"
-                    checked={formData.esInversor}
-                    onChange={handleInputChange}
-                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: COLORES.azul_info, minWidth: '18px' }}
-                  />
-                  <span>Planeo invertir más de USD 70.000 (SUACE)</span>
-                </label>
-              </div>
+              ))}
             </div>
           </div>
 
-          {/* Sección 3: Documentos - responsive */}
+          {/* Sección 3: Documentos */}
           <div style={{ marginBottom: '40px' }}>
             <h2 style={{
-              fontSize: '18px',
-              fontWeight: '700',
-              color: COLORES.navy,
+              fontSize: '20px',
+              fontWeight: '800',
+              color: COLORES.gris_oscuro,
               margin: '0 0 24px 0',
               paddingBottom: '12px',
-              borderBottom: `2px solid ${COLORES.gris_claro}`
+              borderBottom: `2px solid ${COLORES.gris_claro}`,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px'
             }}>
-              {formData.carnetTemporal ? 'Documentos para Radicación Permanente' : '¿Con qué documentos cuentas hoy?'}
+              <i style={{ fontSize: '24px', color: COLORES.verde }} className="lni lni-files"></i>
+              {formData.carnetTemporal ? 'Docs. Permanente' : 'Documentos Requeridos'}
             </h2>
 
             <div style={{ 
               display: 'grid', 
               gridTemplateColumns: '1fr',
-              gap: '16px',
-              '@media (min-width: 768px)': {
-                gridTemplateColumns: '1fr 1fr'
-              }
+              gap: '16px'
             }}>
-              {documentosActuales.map(doc => (
+              {documentosActuales.map((doc, idx) => (
                 <div key={doc.key} style={{
-                  border: `1px solid #e0e0e0`,
-                  borderRadius: '12px',
+                  border: `1.5px solid #e0e0e0`,
+                  borderRadius: '16px',
                   padding: '20px',
-                  transition: 'all 0.2s',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   cursor: 'pointer',
-                  background: '#fafafa'
+                  background: '#ffffff',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  animation: `fadeInUp 0.6s ease-out ${0.9 + idx * 0.05}s both`
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = COLORES.rojo;
-                  e.currentTarget.style.background = '#fff';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+                  e.currentTarget.style.background = '#fafbfc';
+                  e.currentTarget.style.boxShadow = '0 12px 32px rgba(0, 102, 204, 0.12)';
+                  e.currentTarget.style.transform = 'translateY(-4px)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.borderColor = '#e0e0e0';
-                  e.currentTarget.style.background = '#fafafa';
+                  e.currentTarget.style.background = '#ffffff';
                   e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.transform = 'translateY(0)';
                 }}
                 >
-                  <label style={{ cursor: 'pointer' }}>
+                  {/* Icon Badge */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '-8px',
+                    right: '-8px',
+                    fontSize: '48px',
+                    opacity: 0.1,
+                    pointerEvents: 'none'
+                  }}>
+                    {doc.icon}
+                  </div>
+
+                  <label style={{ cursor: 'pointer', position: 'relative', zIndex: 1 }}>
                     <div style={{
                       display: 'flex',
                       alignItems: 'flex-start',
                       gap: '12px',
-                      marginBottom: '12px',
-                      fontWeight: '600',
-                      fontSize: '15px'
+                      marginBottom: '10px'
                     }}>
                       <input
                         type="checkbox"
                         name={`doc_${doc.key}`}
                         checked={formData.documentos[doc.key]}
                         onChange={handleInputChange}
-                        style={{ width: '18px', height: '18px', cursor: 'pointer', marginTop: '2px', minWidth: '18px' }}
+                        style={{ 
+                          width: '20px', 
+                          height: '20px', 
+                          cursor: 'pointer', 
+                          marginTop: '2px', 
+                          minWidth: '20px',
+                          accentColor: COLORES.verde
+                        }}
                       />
-                      <span>{doc.label}</span>
+                      <div>
+                        <div style={{
+                          fontWeight: '700',
+                          fontSize: '15px',
+                          color: COLORES.gris_oscuro
+                        }}>
+                          {doc.label}
+                        </div>
+                        <div style={{ 
+                          fontSize: '13px', 
+                          color: COLORES.gris_medio, 
+                          marginTop: '4px',
+                          lineHeight: '1.5'
+                        }}>
+                          {doc.desc}
+                        </div>
+                      </div>
                     </div>
                   </label>
 
-                  <div style={{ fontSize: '13px', color: COLORES.gris_medio, marginBottom: '12px', lineHeight: '1.5' }}>
-                    {doc.desc}
-                  </div>
-
                   {formData.documentos[doc.key] && (
                     <div style={{
-                      marginTop: '12px',
-                      padding: '12px',
-                      background: '#E8F5E9',
-                      borderRadius: '8px',
-                      border: '1px dashed #4CAF50'
+                      marginTop: '14px',
+                      padding: '12px 14px',
+                      background: `linear-gradient(135deg, #E8F5E9, #F1F8E9)`,
+                      borderRadius: '12px',
+                      border: `1.5px dashed ${COLORES.verde}`,
+                      animation: 'slideIn 0.3s ease-out'
                     }}>
                       <label style={{
                         display: 'flex',
@@ -720,10 +783,10 @@ export default function RadicacionPYLanding() {
                         cursor: 'pointer',
                         color: '#2E7D32',
                         fontSize: '13px',
-                        fontWeight: '500'
+                        fontWeight: '600'
                       }}>
-                        <FileUp size={16} />
-                        {formData.archivos[doc.key] ? '✓ Archivo cargado' : 'Cargar archivo (PDF/JPG)'}
+                        <i style={{ fontSize: '16px' }} className="lni lni-cloud-upload"></i>
+                        {formData.archivos[doc.key] ? '✓ Archivo cargado' : 'Cargar archivo'}
                         <input
                           type="file"
                           accept={doc.accept}
@@ -736,10 +799,14 @@ export default function RadicacionPYLanding() {
                           fontSize: '12px',
                           color: '#2E7D32',
                           marginTop: '8px',
-                          fontWeight: '500',
-                          wordBreak: 'break-word'
+                          fontWeight: '600',
+                          wordBreak: 'break-word',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px'
                         }}>
-                          📎 {formData.archivos[doc.key].name}
+                          <i style={{ fontSize: '14px' }} className="lni lni-checkmark-circle"></i>
+                          {formData.archivos[doc.key].name}
                         </div>
                       )}
                     </div>
@@ -752,30 +819,32 @@ export default function RadicacionPYLanding() {
           {/* Advertencias */}
           {advertencias.length > 0 && (
             <div style={{
-              background: '#FFF3CD',
+              background: 'linear-gradient(135deg, #FFF3CD, #FFFACD)',
               border: `2px solid #ffc107`,
-              borderRadius: '12px',
+              borderRadius: '16px',
               padding: '20px',
-              marginBottom: '40px'
+              marginBottom: '40px',
+              animation: 'fadeInUp 0.6s ease-out both'
             }}>
               <h3 style={{
                 fontSize: '15px',
-                fontWeight: '700',
+                fontWeight: '800',
                 color: '#856404',
                 margin: '0 0 12px 0',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px'
               }}>
-                <AlertCircle size={18} />
+                <i style={{ fontSize: '18px' }} className="lni lni-warning"></i>
                 Información Importante
               </h3>
               {advertencias.map((adv, idx) => (
                 <div key={idx} style={{
-                  fontSize: '14px',
+                  fontSize: '13px',
                   color: '#856404',
                   marginBottom: idx < advertencias.length - 1 ? '8px' : '0',
-                  lineHeight: '1.5'
+                  lineHeight: '1.5',
+                  fontWeight: '500'
                 }}>
                   {adv.texto}
                 </div>
@@ -785,100 +854,127 @@ export default function RadicacionPYLanding() {
 
           {/* Notas Legales */}
           <div style={{
-            background: '#E3F2FD',
+            background: 'linear-gradient(135deg, #E3F2FD, #E1F5FE)',
             border: `2px solid ${COLORES.azul_info}`,
-            borderRadius: '12px',
+            borderRadius: '16px',
             padding: '20px',
             marginBottom: '32px',
             fontSize: '13px',
             color: '#1565C0',
-            lineHeight: '1.6'
+            lineHeight: '1.6',
+            fontWeight: '500',
+            animation: 'fadeInUp 0.6s ease-out 0.1s both'
           }}>
-            <strong>📌 Nota:</strong> La emisión del carnet tarda entre 60 y 90 días hábiles. La cédula paraguaya se gestiona después y tarda aprox. 45 días adicionales.
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <i style={{ fontSize: '16px', minWidth: '16px' }} className="lni lni-info"></i>
+              <div>
+                <strong>Nota Importante:</strong> La emisión del carnet tarda entre 60-90 días hábiles. La cédula paraguaya se gestiona después y tarda aprox. 45 días adicionales.
+              </div>
+            </div>
           </div>
 
           {/* Clasificación */}
           {clasificacion && (
             <div style={{
-              background: COLORES.navy,
+              background: `linear-gradient(135deg, ${COLORES.navy}, #2c3e50)`,
               color: 'white',
-              borderRadius: '12px',
-              padding: '24px 20px',
+              borderRadius: '16px',
+              padding: '28px 20px',
               marginBottom: '32px',
               display: 'grid',
               gridTemplateColumns: '1fr',
               gap: '20px',
-              '@media (min-width: 768px)': {
-                gridTemplateColumns: '1fr 1fr'
-              }
+              boxShadow: '0 12px 40px rgba(26, 58, 82, 0.2)',
+              animation: 'fadeInUp 0.6s ease-out 0.2s both'
             }}>
               <div>
-                <div style={{ fontSize: '11px', opacity: '0.8', marginBottom: '6px', textTransform: 'uppercase', fontWeight: '600' }}>Tu Categoría</div>
-                <div style={{
-                  fontSize: '18px',
+                <div style={{ 
+                  fontSize: '11px', 
+                  opacity: '0.7', 
+                  marginBottom: '8px',
+                  textTransform: 'uppercase',
                   fontWeight: '700',
+                  letterSpacing: '0.5px'
+                }}>
+                  Tu Categoría
+                </div>
+                <div style={{
+                  fontSize: '20px',
+                  fontWeight: '800',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px'
+                  gap: '10px'
                 }}>
-                  <CheckCircle2 size={24} style={{ color: COLORES.verde, minWidth: '24px' }} />
+                  <i style={{ fontSize: '24px', color: COLORES.verde }} className="lni lni-checkmark-circle"></i>
                   <span>{clasificacion}</span>
                 </div>
               </div>
-              <div>
-                <div style={{ fontSize: '11px', opacity: '0.8', marginBottom: '6px', textTransform: 'uppercase', fontWeight: '600' }}>Arancel</div>
-                <div style={{
-                  fontSize: '18px',
-                  fontWeight: '700',
-                  color: COLORES.verde
-                }}>
-                  {aranceles || '—'}
+              {aranceles && (
+                <div>
+                  <div style={{ 
+                    fontSize: '11px', 
+                    opacity: '0.7', 
+                    marginBottom: '8px',
+                    textTransform: 'uppercase',
+                    fontWeight: '700',
+                    letterSpacing: '0.5px'
+                  }}>
+                    Arancel Estimado
+                  </div>
+                  <div style={{
+                    fontSize: '20px',
+                    fontWeight: '800',
+                    color: COLORES.verde
+                  }}>
+                    {aranceles || '—'}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
 
-          {/* Botón WhatsApp */}
+          {/* Botón WhatsApp - iOS Style */}
           <button
             onClick={generarMensajeWhatsApp}
             disabled={!formularioCompleto}
             style={{
               width: '100%',
-              minHeight: '54px',
+              minHeight: '56px',
               padding: '16px 20px',
-              background: formularioCompleto ? COLORES.verde : '#ccc',
+              background: formularioCompleto 
+                ? `linear-gradient(135deg, ${COLORES.verde}, #229954)`
+                : '#e0e0e0',
               color: 'white',
               border: 'none',
-              borderRadius: '10px',
+              borderRadius: '14px',
               fontSize: '16px',
-              fontWeight: '700',
+              fontWeight: '800',
               cursor: formularioCompleto ? 'pointer' : 'not-allowed',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '10px',
-              transition: 'all 0.3s',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               letterSpacing: '0.3px',
-              boxShadow: formularioCompleto ? '0 4px 12px rgba(39, 174, 96, 0.3)' : 'none'
+              boxShadow: formularioCompleto 
+                ? '0 8px 24px rgba(39, 174, 96, 0.3)' 
+                : 'none',
+              animation: 'fadeInUp 0.6s ease-out 0.3s both'
             }}
             onMouseEnter={(e) => {
               if (formularioCompleto) {
-                e.target.style.background = '#229954';
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 6px 16px rgba(39, 174, 96, 0.4)';
+                e.target.style.transform = 'translateY(-4px)';
+                e.target.style.boxShadow = '0 12px 32px rgba(39, 174, 96, 0.4)';
               }
             }}
             onMouseLeave={(e) => {
               if (formularioCompleto) {
-                e.target.style.background = COLORES.verde;
                 e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 4px 12px rgba(39, 174, 96, 0.3)';
+                e.target.style.boxShadow = '0 8px 24px rgba(39, 174, 96, 0.3)';
               }
             }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-5.031 1.378c-3.055 2.289-5.134 5.943-5.134 9.843 0 1.131.113 2.268.333 3.372l-.52 1.897 1.954-.512c1.289.703 2.759 1.073 4.367 1.073 5.522 0 10-4.477 10-10S17.324 2 11.802 2c-3.763 0-7.303 2.191-8.934 5.66"/>
-            </svg>
+            <i style={{ fontSize: '18px' }} className="lni lni-whatsapp"></i>
             Enviar a mi Gestor por WhatsApp
           </button>
 
@@ -886,9 +982,10 @@ export default function RadicacionPYLanding() {
             fontSize: '12px',
             color: COLORES.gris_medio,
             textAlign: 'center',
-            marginTop: '14px'
+            marginTop: '14px',
+            fontWeight: '500'
           }}>
-            Completa todos los campos y confirma al menos 1 documento
+            {formularioCompleto ? '✓ Listo para enviar' : 'Completa todos los campos requeridos'}
           </div>
         </div>
 
@@ -899,23 +996,26 @@ export default function RadicacionPYLanding() {
             bottom: '24px',
             left: '16px',
             right: '16px',
-            background: COLORES.verde,
+            background: `linear-gradient(135deg, ${COLORES.verde}, #229954)`,
             color: 'white',
-            padding: '14px 20px',
-            borderRadius: '10px',
+            padding: '16px 20px',
+            borderRadius: '14px',
             fontSize: '14px',
-            fontWeight: '600',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+            fontWeight: '700',
+            boxShadow: '0 12px 40px rgba(39, 174, 96, 0.3)',
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
-            animation: 'slideUp 0.3s ease-out',
+            animation: 'slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
             maxWidth: '600px',
             margin: '0 auto',
             zIndex: 1000
           }}>
-            <CheckCircle2 size={20} style={{ minWidth: '20px' }} />
-            <span>¡Mensaje enviado! Revisa tu WhatsApp</span>
+            <i style={{ fontSize: '20px', minWidth: '20px' }} className="lni lni-checkmark-circle"></i>
+            <div>
+              <strong>¡Mensaje enviado!</strong>
+              <div style={{ fontSize: '12px', opacity: '0.9' }}>Revisa tu WhatsApp ahora</div>
+            </div>
           </div>
         )}
 
@@ -928,15 +1028,26 @@ export default function RadicacionPYLanding() {
           paddingTop: '24px',
           borderTop: '1px solid #e0e0e0'
         }}>
-          <p style={{ margin: '0 0 8px 0' }}>© 2025 Evaluación de Radicación en Paraguay</p>
-          <p style={{ margin: 0, fontSize: '11px', opacity: '0.8' }}>
-            Este formulario es informativo y se basa en Ley N° 6984/22. Consulta con tu gestor para confirmación oficial.
+          <p style={{ margin: '0 0 8px 0', fontWeight: '600' }}>© 2025 Paraguay Migraciones</p>
+          <p style={{ margin: 0, fontSize: '11px', opacity: '0.7' }}>
+            Evaluación informativa basada en Ley Nº 6984/22
           </p>
         </div>
       </main>
 
       <style>{`
-        @keyframes slideUp {
+        @keyframes fadeInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes fadeInUp {
           from {
             opacity: 0;
             transform: translateY(20px);
@@ -947,9 +1058,37 @@ export default function RadicacionPYLanding() {
           }
         }
         
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(100px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: scaleY(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: scaleY(1);
+          }
+        }
+        
         @media (max-width: 767px) {
           input, select {
-            font-size: 16px;
+            font-size: 16px !important;
+          }
+        }
+        
+        @media (min-width: 768px) {
+          div[style*="gridTemplateColumns"] {
+            grid-template-columns: 1fr 1fr !important;
           }
         }
       `}</style>
