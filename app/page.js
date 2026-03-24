@@ -217,13 +217,19 @@ export default function RadicacionPYLanding() {
         }}>
           <div>
             <div style={{
-              fontSize: '13px',
-              fontWeight: '700',
-              color: COLORES.rojo,
-              letterSpacing: '1px',
-              margin: 0
-            }}>PARAGUAY MIGRACIONES</div>
-          </div>
+  fontSize: '18px',
+  fontWeight: '700',
+  letterSpacing: '1px',
+  margin: 0
+}}>
+  <span style={{ color: COLORES.rojo }}>
+    PARAGUAY
+  </span>{' '}
+  <span style={{ color: COLORES.navy }}>
+    MIGRACIONES
+  </span>
+</div>
+      
           <div style={{
             fontSize: '11px',
             color: COLORES.gris_medio,
