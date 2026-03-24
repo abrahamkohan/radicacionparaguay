@@ -10,7 +10,6 @@ export default function RadicacionPYLanding() {
     edad: '',
     estadoCivil: '',
     carnetTemporal: false,
-    esInversor: false,
     documentos: {
       pasaporte: false,
       nacimiento: false,
@@ -22,14 +21,17 @@ export default function RadicacionPYLanding() {
       cedulaParaguaya: false,
     },
     archivos: {
-      pasaporte: null,
-      nacimiento: null,
-      antecedentes: null,
-      matrimonio: null,
-      foto: null,
-      ruc: null,
-      carnetParaguayo: null,
-      cedulaParaguaya: null,
+      pasaporte_frente: [],
+      pasaporte_dorso: [],
+      nacimiento: [],
+      antecedentes: [],
+      matrimonio: [],
+      foto: [],
+      ruc: [],
+      carnetParaguayo_frente: [],
+      carnetParaguayo_dorso: [],
+      cedulaParaguaya_frente: [],
+      cedulaParaguaya_dorso: [],
     }
   });
 
@@ -38,6 +40,7 @@ export default function RadicacionPYLanding() {
   const [aranceles, setAranceles] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [formProgress, setFormProgress] = useState(0);
+  const [enviando, setEnviando] = useState(false);
 
   const GESTOR_CONFIG = {
     nombre: 'Abraham Kohan',
@@ -73,18 +76,82 @@ export default function RadicacionPYLanding() {
 
   const documentosPorTipo = {
     nuevo: [
-      { key: 'pasaporte', label: 'DNI, ID o Pasaporte Vigente', desc: 'Debe ser original', accept: '.pdf,.jpg,.jpeg,.png' },
-      { key: 'nacimiento', label: 'Nacimiento Apostillado', desc: 'Obligatorio por Convención de La Haya', accept: '.pdf,.jpg,.jpeg,.png' },
-      { key: 'antecedentes', label: 'Antecedentes Apostillados', desc: 'Solo si eres mayor de 14 años', accept: '.pdf,.jpg,.jpeg,.png' },
-      { key: 'matrimonio', label: 'Certificado de Matrimonio/Divorcio', desc: 'Solo si no eres soltero/a', accept: '.pdf,.jpg,.jpeg,.png' },
-      { key: 'foto', label: 'Foto Carnet', desc: 'Sacada con celular, solo para uso interno', accept: '.jpg,.jpeg,.png' },
+      { 
+        key: 'pasaporte', 
+        label: 'DNI, ID o Pasaporte Vigente', 
+        desc: 'Debe ser original', 
+        hasDosCaras: true,
+        accept: '.pdf,.jpg,.jpeg,.png' 
+      },
+      { 
+        key: 'nacimiento', 
+        label: 'Nacimiento Apostillado', 
+        desc: 'Obligatorio por Convención de La Haya', 
+        hasDosCaras: false, 
+        accept: '.pdf,.jpg,.jpeg,.png', 
+        multiple: true 
+      },
+      { 
+        key: 'antecedentes', 
+        label: 'Antecedentes Apostillados', 
+        desc: 'Solo si eres mayor de 14 años', 
+        hasDosCaras: false, 
+        accept: '.pdf,.jpg,.jpeg,.png', 
+        multiple: true 
+      },
+      { 
+        key: 'matrimonio', 
+        label: 'Certificado de Matrimonio/Divorcio', 
+        desc: 'Solo si no eres soltero/a', 
+        hasDosCaras: false, 
+        accept: '.pdf,.jpg,.jpeg,.png', 
+        multiple: true 
+      },
+      { 
+        key: 'foto', 
+        label: 'Foto Carnet', 
+        desc: 'Sacada con celular, solo para uso interno', 
+        hasDosCaras: false, 
+        accept: '.jpg,.jpeg,.png' 
+      },
     ],
     permanente: [
-      { key: 'pasaporte', label: 'DNI o Pasaporte Vigente', desc: 'Debe estar vigente', accept: '.pdf,.jpg,.jpeg,.png' },
-      { key: 'foto', label: 'Foto Tipo Carnet', desc: 'Digital, sacada con celular', accept: '.jpg,.jpeg,.png' },
-      { key: 'ruc', label: 'RUC / Libros de Actas O Título Universitario', desc: 'Apostillado si es título profesional', accept: '.pdf,.jpg,.jpeg,.png' },
-      { key: 'carnetParaguayo', label: 'Carnet de Admisión Temporal Paraguaya', desc: 'Vigente y en buen estado', accept: '.pdf,.jpg,.jpeg,.png' },
-      { key: 'cedulaParaguaya', label: 'Cédula Paraguaya', desc: 'Opcional, si ya cuenta con ella', accept: '.pdf,.jpg,.jpeg,.png' },
+      { 
+        key: 'pasaporte', 
+        label: 'DNI o Pasaporte Vigente', 
+        desc: 'Debe estar vigente', 
+        hasDosCaras: true,
+        accept: '.pdf,.jpg,.jpeg,.png' 
+      },
+      { 
+        key: 'foto', 
+        label: 'Foto Tipo Carnet', 
+        desc: 'Digital, sacada con celular', 
+        hasDosCaras: false, 
+        accept: '.jpg,.jpeg,.png' 
+      },
+      { 
+        key: 'ruc', 
+        label: 'RUC / Libros de Actas O Título Universitario', 
+        desc: 'Apostillado si es título profesional', 
+        hasDosCaras: false, 
+        accept: '.pdf,.jpg,.jpeg,.png', 
+        multiple: true 
+      },
+      { 
+        key: 'carnetParaguayo', 
+        label: 'Carnet de Admisión Temporal Paraguaya', 
+        desc: 'Vigente y en buen estado', 
+        hasDosCaras: true,
+        accept: '.pdf,.jpg,.jpeg,.png' 
+      },
+      { 
+        key: 'cedulaParaguaya', 
+        label: 'Cédula Paraguaya', 
+        desc: 'Opcional, si ya cuenta con ella', 
+        hasDosCaras: true,
+        accept: '.pdf,.jpg,.jpeg,.png' 
+      },
     ]
   };
 
@@ -117,9 +184,6 @@ export default function RadicacionPYLanding() {
 
       if (formData.carnetTemporal) {
         tipoRadicacion += ' → Permanente';
-      } else if (formData.esInversor) {
-        tipoRadicacion = 'SUACE (Inversión)';
-        arancel = 'Variable según monto';
       } else {
         tipoRadicacion += ' → Temporal';
       }
@@ -160,40 +224,98 @@ export default function RadicacionPYLanding() {
   };
 
   const handleFileUpload = (e, docType) => {
-    const file = e.target.files?.[0];
-    if (file) {
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    if (files.length > 0) {
       setFormData(prev => ({
         ...prev,
-        archivos: { ...prev.archivos, [docType]: file }
+        archivos: { ...prev.archivos, [docType]: files }
       }));
     }
   };
 
-  const generarMensajeWhatsApp = () => {
+  const generarMensajeWhatsApp = async () => {
+    setEnviando(true);
+
     const documentosListos = Object.entries(formData.documentos)
       .filter(([, valor]) => valor)
       .map(([key]) => {
         const labels = {
-          pasaporte: 'Pasaporte/DNI/Cédula',
+          pasaporte: 'Pasaporte/DNI (Frente + Dorso)',
           nacimiento: 'Nacimiento Apostillado',
           antecedentes: 'Antecedentes Penales',
           matrimonio: 'Cert. Matrimonio/Divorcio',
           foto: 'Foto tipo Carnet',
           ruc: 'RUC/Título Universitario',
-          carnetParaguayo: 'Carnet Temporal Paraguayo',
-          cedulaParaguaya: 'Cédula Paraguaya',
+          carnetParaguayo: 'Carnet Temporal (Frente + Dorso)',
+          cedulaParaguaya: 'Cédula Paraguaya (Frente + Dorso)',
         };
         return labels[key] || key;
       })
       .join('\n• ');
 
-    const mensaje = `Hola, he completado mi evaluación de radicación:\n\n📋 *Datos Personales*\nNombre: ${formData.nombre}\nNacionalidad: ${formData.nacionalidad}\nEdad: ${formData.edad} años\n\n🏛️ *Clasificación de Trámite*\n${clasificacion}\n\n💰 *Arancel Estimado*\n${aranceles}\n\n📄 *Documentos Listos*\n• ${documentosListos || 'Aún no completados'}\n\n⚠️ *Observaciones*\n${advertencias.map(a => a.texto).join('\n') || 'Sin observaciones'}\n\nQuiero agendar una consulta.`;
+    const bloqueArancel = aranceles
+      ? `\n💰 *Arancel Estimado*\n${aranceles}\n`
+      : '';
 
+    const mensaje = `Hola, he completado mi evaluación de radicación:
+
+📋 *Datos Personales*
+Nombre: ${formData.nombre}
+Nacionalidad: ${formData.nacionalidad}
+Edad: ${formData.edad} años
+
+🏛️ *Clasificación de Trámite*
+${clasificacion}
+${bloqueArancel}
+📄 *Documentos Listos*
+• ${documentosListos || 'Aún no completados'}
+
+⚠️ *Observaciones*
+${advertencias.map(a => a.texto).join('\n') || 'Sin observaciones'}
+
+Quiero agendar una consulta.`;
+
+    // Preparar FormData para email (Resend)
+    const formDataForEmail = new FormData();
+    formDataForEmail.append('nombre', formData.nombre);
+    formDataForEmail.append('nacionalidad', formData.nacionalidad);
+    formDataForEmail.append('paisResidencia', formData.paisResidencia);
+    formDataForEmail.append('edad', formData.edad);
+    formDataForEmail.append('estadoCivil', formData.estadoCivil);
+    formDataForEmail.append('carnetTemporal', formData.carnetTemporal);
+    formDataForEmail.append('clasificacion', clasificacion);
+    formDataForEmail.append('aranceles', aranceles);
+
+    // Agregar todos los archivos
+    Object.entries(formData.archivos).forEach(([key, files]) => {
+      if (Array.isArray(files)) {
+        files.forEach((file, index) => {
+          formDataForEmail.append(`archivo_${key}`, file);
+        });
+      }
+    });
+
+    // Enviar email con archivos (Resend)
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        body: formDataForEmail
+      });
+
+      if (response.ok) {
+        console.log('Email enviado con éxito');
+      }
+    } catch (error) {
+      console.log('Email enviado (o no disponible en desarrollo)');
+    }
+
+    // Abrir WhatsApp
     const numeroLimpio = GESTOR_CONFIG.whatsapp.replace(/\D/g, '');
     const urlWhatsApp = `https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`;
     
     window.open(urlWhatsApp, '_blank');
     setShowSuccess(true);
+    setEnviando(false);
     setTimeout(() => setShowSuccess(false), 3000);
   };
 
@@ -492,7 +614,8 @@ export default function RadicacionPYLanding() {
             <div style={{ 
               display: 'grid', 
               gridTemplateColumns: '1fr',
-              gap: '20px'
+              gap: '20px',
+              '@media (min-width: 640px)': { gridTemplateColumns: '150px 1fr' }
             }}>
               <div style={{ animation: 'fadeInUp 0.6s ease-out 0.6s both' }}>
                 <label style={{ 
@@ -511,20 +634,21 @@ export default function RadicacionPYLanding() {
                   name="edad"
                   value={formData.edad}
                   onChange={handleInputChange}
-                  placeholder="Tu edad"
+                  placeholder="XX"
                   min="0"
                   max="120"
                   style={{
                     width: '100%',
-                    padding: '14px 16px',
-                    minHeight: '48px',
+                    padding: '12px 14px',
+                    minHeight: '44px',
                     border: `1.5px solid #e0e0e0`,
                     borderRadius: '12px',
                     fontSize: '16px',
                     fontFamily: 'inherit',
                     boxSizing: 'border-box',
                     transition: 'all 0.3s ease',
-                    background: '#fafbfc'
+                    background: '#fafbfc',
+                    textAlign: 'center'
                   }}
                   onFocus={(e) => {
                     e.target.style.borderColor = COLORES.rojo;
@@ -557,8 +681,8 @@ export default function RadicacionPYLanding() {
                   onChange={handleInputChange}
                   style={{
                     width: '100%',
-                    padding: '14px 16px',
-                    minHeight: '48px',
+                    padding: '12px 14px',
+                    minHeight: '44px',
                     border: `1.5px solid #e0e0e0`,
                     borderRadius: '12px',
                     fontSize: '16px',
@@ -689,12 +813,13 @@ export default function RadicacionPYLanding() {
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
                 >
+                  {/* Encabezado del documento */}
                   <label style={{ cursor: 'pointer' }}>
                     <div style={{
                       display: 'flex',
                       alignItems: 'flex-start',
                       gap: '12px',
-                      marginBottom: '10px'
+                      marginBottom: '16px'
                     }}>
                       <input
                         type="checkbox"
@@ -710,7 +835,7 @@ export default function RadicacionPYLanding() {
                           accentColor: COLORES.verde
                         }}
                       />
-                      <div>
+                      <div style={{ flex: 1 }}>
                         <div style={{
                           fontWeight: '700',
                           fontSize: '15px',
@@ -730,44 +855,103 @@ export default function RadicacionPYLanding() {
                     </div>
                   </label>
 
+                  {/* Zona de carga de archivos */}
                   {formData.documentos[doc.key] && (
-                    <div style={{
-                      marginTop: '14px',
-                      padding: '12px 14px',
-                      background: `linear-gradient(135deg, #E8F5E9, #F1F8E9)`,
-                      borderRadius: '12px',
-                      border: `1.5px dashed ${COLORES.verde}`,
-                      animation: 'slideIn 0.3s ease-out'
-                    }}>
-                      <label style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        cursor: 'pointer',
-                        color: '#2E7D32',
-                        fontSize: '13px',
-                        fontWeight: '600'
-                      }}>
-                        {formData.archivos[doc.key] ? '✓ Archivo cargado' : 'Cargar archivo'}
-                        <input
-                          type="file"
-                          accept={doc.accept}
-                          onChange={(e) => handleFileUpload(e, doc.key)}
-                          style={{ display: 'none' }}
-                        />
-                      </label>
-                      {formData.archivos[doc.key] && (
+                    <div>
+                      {doc.hasDosCaras ? (
+                        // Dos columnas para Frente y Dorso
                         <div style={{
-                          fontSize: '12px',
-                          color: '#2E7D32',
-                          marginTop: '8px',
-                          fontWeight: '600',
-                          wordBreak: 'break-word',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px'
+                          display: 'grid',
+                          gridTemplateColumns: '1fr 1fr',
+                          gap: '12px'
                         }}>
-                          ✓ {formData.archivos[doc.key].name}
+                          {['frente', 'dorso'].map((lado) => (
+                            <div key={lado} style={{
+                              padding: '12px 14px',
+                              background: `linear-gradient(135deg, #E8F5E9, #F1F8E9)`,
+                              borderRadius: '12px',
+                              border: `1.5px dashed ${COLORES.verde}`,
+                              animation: 'slideIn 0.3s ease-out'
+                            }}>
+                              <label style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                cursor: 'pointer',
+                                color: '#2E7D32',
+                                fontSize: '12px',
+                                fontWeight: '600'
+                              }}>
+                                <span style={{ textTransform: 'capitalize', fontWeight: '700' }}>
+                                  📄 {lado}
+                                </span>
+                                <input
+                                  type="file"
+                                  accept={doc.accept}
+                                  onChange={(e) => handleFileUpload(e, `${doc.key}_${lado}`)}
+                                  style={{ display: 'none' }}
+                                />
+                              </label>
+                              {formData.archivos[`${doc.key}_${lado}`]?.length > 0 && (
+                                <div style={{
+                                  fontSize: '11px',
+                                  color: '#2E7D32',
+                                  marginTop: '6px',
+                                  fontWeight: '600',
+                                  wordBreak: 'break-word'
+                                }}>
+                                  ✓ {formData.archivos[`${doc.key}_${lado}`][0].name}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        // Un solo input
+                        <div style={{
+                          padding: '12px 14px',
+                          background: `linear-gradient(135deg, #E8F5E9, #F1F8E9)`,
+                          borderRadius: '12px',
+                          border: `1.5px dashed ${COLORES.verde}`,
+                          animation: 'slideIn 0.3s ease-out'
+                        }}>
+                          <label style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            cursor: 'pointer',
+                            color: '#2E7D32',
+                            fontSize: '13px',
+                            fontWeight: '600'
+                          }}>
+                            {formData.archivos[doc.key]?.length > 0 ? `✓ ${formData.archivos[doc.key].length} archivo(s)` : 'Cargar archivo'}
+                            <input
+                              type="file"
+                              accept={doc.accept}
+                              onChange={(e) => handleFileUpload(e, doc.key)}
+                              multiple={doc.multiple}
+                              style={{ display: 'none' }}
+                            />
+                          </label>
+                          {formData.archivos[doc.key]?.length > 0 && (
+                            <div style={{
+                              fontSize: '12px',
+                              color: '#2E7D32',
+                              marginTop: '8px',
+                              fontWeight: '600'
+                            }}>
+                              {formData.archivos[doc.key].map((file, idx) => (
+                                <div key={idx} style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '6px',
+                                  marginBottom: idx < formData.archivos[doc.key].length - 1 ? '4px' : '0'
+                                }}>
+                                  ✓ {file.name}
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -922,13 +1106,13 @@ export default function RadicacionPYLanding() {
         }}>
           <button
             onClick={generarMensajeWhatsApp}
-            disabled={!formularioCompleto}
+            disabled={!formularioCompleto || enviando}
             style={{
               width: '100%',
               maxWidth: '520px',
               minHeight: '56px',
               padding: '16px 20px',
-              background: formularioCompleto 
+              background: formularioCompleto && !enviando
                 ? `linear-gradient(135deg, ${COLORES.verde}, #229954)`
                 : '#e0e0e0',
               color: 'white',
@@ -936,36 +1120,36 @@ export default function RadicacionPYLanding() {
               borderRadius: '14px',
               fontSize: '16px',
               fontWeight: '800',
-              cursor: formularioCompleto ? 'pointer' : 'not-allowed',
+              cursor: formularioCompleto && !enviando ? 'pointer' : 'not-allowed',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '10px',
               transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               letterSpacing: '0.3px',
-              boxShadow: formularioCompleto 
+              boxShadow: formularioCompleto && !enviando
                 ? '0 8px 24px rgba(39, 174, 96, 0.3)' 
                 : 'none'
             }}
             onMouseEnter={(e) => {
-              if (formularioCompleto) {
+              if (formularioCompleto && !enviando) {
                 e.target.style.transform = 'translateY(-4px)';
                 e.target.style.boxShadow = '0 12px 32px rgba(39, 174, 96, 0.4)';
               }
             }}
             onMouseLeave={(e) => {
-              if (formularioCompleto) {
+              if (formularioCompleto && !enviando) {
                 e.target.style.transform = 'translateY(0)';
                 e.target.style.boxShadow = '0 8px 24px rgba(39, 174, 96, 0.3)';
               }
             }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 48 48">
               <path fill="#fff" d="M4.9,43.3l2.7-9.8C5.9,30.6,5,27.3,5,24C5,13.5,13.5,5,24,5c5.1,0,9.8,2,13.4,5.6C41,14.2,43,18.9,43,24c0,10.5-8.5,19-19,19c0,0,0,0,0,0h0c-3.2,0-6.3-0.8-9.1-2.3L4.9,43.3z"></path>
               <path fill="#40c351" d="M35.2,12.8c-3-3-6.9-4.6-11.2-4.6C15.3,8.2,8.2,15.3,8.2,24c0,3,0.8,5.9,2.4,8.4L11,33l-1.6,5.8l6-1.6l0.6,0.3c2.4,1.4,5.2,2.2,8,2.2h0c8.7,0,15.8-7.1,15.8-15.8C39.8,19.8,38.2,15.8,35.2,12.8z"></path>
               <path fill="#fff" fillRule="evenodd" d="M19.3,16c-0.4-0.8-0.7-0.8-1.1-0.8c-0.3,0-0.6,0-0.9,0s-0.8,0.1-1.3,0.6c-0.4,0.5-1.7,1.6-1.7,4s1.7,4.6,1.9,4.9s3.3,5.3,8.1,7.2c4,1.6,4.8,1.3,5.7,1.2c0.9-0.1,2.8-1.1,3.2-2.3c0.4-1.1,0.4-2.1,0.3-2.3c-0.1-0.2-0.4-0.3-0.9-0.6s-2.8-1.4-3.2-1.5c-0.4-0.2-0.8-0.2-1.1,0.2c-0.3,0.5-1.2,1.5-1.5,1.9c-0.3,0.3-0.6,0.4-1,0.1c-0.5-0.2-2-0.7-3.8-2.4c-1.4-1.3-2.4-2.8-2.6-3.3c-0.3-0.5,0-0.7,0.2-1c0.2-0.2,0.5-0.6,0.7-0.8c0.2-0.3,0.3-0.5,0.5-0.8c0.2-0.3,0.1-0.6,0-0.8C20.6,19.3,19.7,17,19.3,16z" clipRule="evenodd"></path>
             </svg>
-            Enviar Formulario
+            {enviando ? 'Enviando...' : 'Enviar Formulario'}
           </button>
         </div>
       </div>
