@@ -169,8 +169,8 @@ export default function RadicacionPYLanding() {
           pasaporte: 'Pasaporte/DNI/Cédula',
           nacimiento: 'Nacimiento Apostillado',
           antecedentes: 'Antecedentes Penales',
-          matrimonio: 'Cert. Matrimonio/Divorcio'
-          foto:'Foto tipo Canet'
+          matrimonio: 'Cert. Matrimonio/Divorcio',
+          foto: 'Foto tipo Canet',
         };
         return labels[key] || key;
       })
