@@ -35,11 +35,11 @@ export default function RadicacionPYLanding() {
 
   // CONFIG: Editable por cada gestor
   const GESTOR_CONFIG = {
-    nombre: 'Tu Gestor',
-    whatsapp: '+59895000000',
-    email: 'gestor@example.com',
+    nombre: 'Abraham Kohan',
+    whatsapp: '+595982000808',
+    email: 'info@abrahamkohan.com.py',
     empresa: '',
-    logo: null
+    logo: 'https://abrahamkohan.com.py/_next/image?url=%2Flogo.png&w=48&q=75',
   };
 
   const COLORES = {
@@ -563,32 +563,32 @@ export default function RadicacionPYLanding() {
               {[
                 { 
                   key: 'pasaporte', 
-                  label: 'ID o Pasaporte Vigente',
-                  desc: 'Debe ser original [4]',
+                  label: 'DNI, ID o Pasaporte Vigente',
+                  desc: 'Debe ser original',
                   accept: '.pdf,.jpg,.jpeg,.png'
                 },
                 { 
                   key: 'nacimiento', 
                   label: 'Nacimiento Apostillado',
-                  desc: 'Obligatorio por Convención de La Haya [5, 6]',
+                  desc: 'Obligatorio por Convención de La Haya',
                   accept: '.pdf,.jpg,.jpeg,.png'
                 },
                 { 
                   key: 'antecedentes', 
                   label: 'Antecedentes Apostillados',
-                  desc: 'Solo si eres mayor de 14 años [7]',
+                  desc: 'Solo si eres mayor de 14 años',
                   accept: '.pdf,.jpg,.jpeg,.png'
                 },
                   { 
                   key: 'matrimonio', 
                   label: 'Certificado de Matrimonio/Divorcio',
-                  desc: 'Solo si no eres soltero/a [8]',
+                  desc: 'Solo si no eres soltero/a',
                   accept: '.pdf,.jpg,.jpeg,.png'
                 },
                 { 
                   key: 'foto', 
-                  label: 'Foto tipo Carnet con celular',
-                  desc: 'Solo si no eres soltero/a [8]',
+                  label: 'Foto Carnet',
+                  desc: 'Sacada con celular, solo para uso interno',
                   accept: '.pdf,.jpg,.jpeg,.png'
                 },
               ].map(doc => (
