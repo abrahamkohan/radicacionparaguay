@@ -584,13 +584,13 @@ export default function RadicacionPYLanding() {
                   label: 'Certificado de Matrimonio/Divorcio',
                   desc: 'Solo si no eres soltero/a [8]',
                   accept: '.pdf,.jpg,.jpeg,.png'
-                }
+                },
                 { 
                   key: 'foto', 
                   label: 'Foto tipo Carnet con celular',
                   desc: 'Solo si no eres soltero/a [8]',
                   accept: '.pdf,.jpg,.jpeg,.png'
-                }
+                },
               ].map(doc => (
                 <div key={doc.key} style={{
                   border: `1px solid #e0e0e0`,
