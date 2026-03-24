@@ -73,18 +73,18 @@ export default function RadicacionPYLanding() {
 
   const documentosPorTipo = {
     nuevo: [
-      { key: 'pasaporte', label: 'DNI, ID o Pasaporte Vigente', desc: 'Debe ser original', icon: '📋', accept: '.pdf,.jpg,.jpeg,.png' },
-      { key: 'nacimiento', label: 'Nacimiento Apostillado', desc: 'Obligatorio por Convención de La Haya', icon: '📄', accept: '.pdf,.jpg,.jpeg,.png' },
-      { key: 'antecedentes', label: 'Antecedentes Apostillados', desc: 'Solo si eres mayor de 14 años', icon: '🔍', accept: '.pdf,.jpg,.jpeg,.png' },
-      { key: 'matrimonio', label: 'Certificado de Matrimonio/Divorcio', desc: 'Solo si no eres soltero/a', icon: '💍', accept: '.pdf,.jpg,.jpeg,.png' },
-      { key: 'foto', label: 'Foto Carnet', desc: 'Sacada con celular, solo para uso interno', icon: '📸', accept: '.jpg,.jpeg,.png' },
+      { key: 'pasaporte', label: 'DNI, ID o Pasaporte Vigente', desc: 'Debe ser original', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'nacimiento', label: 'Nacimiento Apostillado', desc: 'Obligatorio por Convención de La Haya', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'antecedentes', label: 'Antecedentes Apostillados', desc: 'Solo si eres mayor de 14 años', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'matrimonio', label: 'Certificado de Matrimonio/Divorcio', desc: 'Solo si no eres soltero/a', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'foto', label: 'Foto Carnet', desc: 'Sacada con celular, solo para uso interno', accept: '.jpg,.jpeg,.png' },
     ],
     permanente: [
-      { key: 'pasaporte', label: 'DNI o Pasaporte Vigente', desc: 'Debe estar vigente', icon: '📋', accept: '.pdf,.jpg,.jpeg,.png' },
-      { key: 'foto', label: 'Foto Tipo Carnet', desc: 'Digital, sacada con celular', icon: '📸', accept: '.jpg,.jpeg,.png' },
-      { key: 'ruc', label: 'RUC / Libros de Actas O Título Universitario', desc: 'Apostillado si es título profesional', icon: '🏢', accept: '.pdf,.jpg,.jpeg,.png' },
-      { key: 'carnetParaguayo', label: 'Carnet de Admisión Temporal Paraguaya', icon: '🪪', desc: 'Vigente y en buen estado', accept: '.pdf,.jpg,.jpeg,.png' },
-      { key: 'cedulaParaguaya', label: 'Cédula Paraguaya', desc: 'Opcional, si ya cuenta con ella', icon: '🆔', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'pasaporte', label: 'DNI o Pasaporte Vigente', desc: 'Debe estar vigente', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'foto', label: 'Foto Tipo Carnet', desc: 'Digital, sacada con celular', accept: '.jpg,.jpeg,.png' },
+      { key: 'ruc', label: 'RUC / Libros de Actas O Título Universitario', desc: 'Apostillado si es título profesional', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'carnetParaguayo', label: 'Carnet de Admisión Temporal Paraguaya', desc: 'Vigente y en buen estado', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'cedulaParaguaya', label: 'Cédula Paraguaya', desc: 'Opcional, si ya cuenta con ella', accept: '.pdf,.jpg,.jpeg,.png' },
     ]
   };
 
@@ -214,8 +214,6 @@ export default function RadicacionPYLanding() {
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
       color: COLORES.gris_oscuro
     }}>
-      
-      <script src="https://cdn.lineicons.com/web/1.0.0/lineicons.js"></script>
 
       {/* Navbar con Glass effect */}
       <nav style={{
@@ -239,17 +237,10 @@ export default function RadicacionPYLanding() {
           <div style={{ 
             fontSize: '16px', 
             fontWeight: '700', 
-            letterSpacing: '0.5px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
+            letterSpacing: '0.5px'
           }}>
-            <i style={{ fontSize: '20px', color: COLORES.rojo }} className="lni lni-passport"></i>
-            <span>
-              <span style={{ color: COLORES.rojo }}>PARAGUAY</span>
-              <br style={{ display: 'none' }} />
-              <span style={{ color: COLORES.navy }}> MIGRACIONES</span>
-            </span>
+            <span style={{ color: COLORES.rojo }}>PARAGUAY</span>{' '}
+            <span style={{ color: COLORES.navy }}>MIGRACIONES</span>
           </div>
           <div style={{ 
             fontSize: '11px', 
@@ -350,12 +341,8 @@ export default function RadicacionPYLanding() {
               color: COLORES.gris_oscuro,
               margin: '0 0 24px 0',
               paddingBottom: '12px',
-              borderBottom: `2px solid ${COLORES.gris_claro}`,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px'
+              borderBottom: `2px solid ${COLORES.gris_claro}`
             }}>
-              <i style={{ fontSize: '24px', color: COLORES.navy }} className="lni lni-user"></i>
               Datos Personales
             </h2>
 
@@ -615,12 +602,8 @@ export default function RadicacionPYLanding() {
               fontSize: '18px',
               fontWeight: '800',
               color: COLORES.rojo,
-              margin: '0 0 24px 0',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px'
+              margin: '0 0 24px 0'
             }}>
-              <i style={{ fontSize: '24px' }} className="lni lni-briefcase"></i>
               Tipo de Radicación
             </h3>
 
@@ -673,13 +656,9 @@ export default function RadicacionPYLanding() {
               color: COLORES.gris_oscuro,
               margin: '0 0 24px 0',
               paddingBottom: '12px',
-              borderBottom: `2px solid ${COLORES.gris_claro}`,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px'
+              borderBottom: `2px solid ${COLORES.gris_claro}`
             }}>
-              <i style={{ fontSize: '24px', color: COLORES.verde }} className="lni lni-files"></i>
-              {formData.carnetTemporal ? 'Docs. Permanente' : 'Documentos Requeridos'}
+              {formData.carnetTemporal ? 'Documentos Permanente' : 'Documentos Requeridos'}
             </h2>
 
             <div style={{ 
@@ -695,8 +674,6 @@ export default function RadicacionPYLanding() {
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   cursor: 'pointer',
                   background: '#ffffff',
-                  position: 'relative',
-                  overflow: 'hidden',
                   animation: `fadeInUp 0.6s ease-out ${0.9 + idx * 0.05}s both`
                 }}
                 onMouseEnter={(e) => {
@@ -712,19 +689,7 @@ export default function RadicacionPYLanding() {
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
                 >
-                  {/* Icon Badge */}
-                  <div style={{
-                    position: 'absolute',
-                    top: '-8px',
-                    right: '-8px',
-                    fontSize: '48px',
-                    opacity: 0.1,
-                    pointerEvents: 'none'
-                  }}>
-                    {doc.icon}
-                  </div>
-
-                  <label style={{ cursor: 'pointer', position: 'relative', zIndex: 1 }}>
+                  <label style={{ cursor: 'pointer' }}>
                     <div style={{
                       display: 'flex',
                       alignItems: 'flex-start',
@@ -783,7 +748,6 @@ export default function RadicacionPYLanding() {
                         fontSize: '13px',
                         fontWeight: '600'
                       }}>
-                        <i style={{ fontSize: '16px' }} className="lni lni-cloud-upload"></i>
                         {formData.archivos[doc.key] ? '✓ Archivo cargado' : 'Cargar archivo'}
                         <input
                           type="file"
@@ -803,8 +767,7 @@ export default function RadicacionPYLanding() {
                           alignItems: 'center',
                           gap: '6px'
                         }}>
-                          <i style={{ fontSize: '14px' }} className="lni lni-checkmark-circle"></i>
-                          {formData.archivos[doc.key].name}
+                          ✓ {formData.archivos[doc.key].name}
                         </div>
                       )}
                     </div>
@@ -828,12 +791,8 @@ export default function RadicacionPYLanding() {
                 fontSize: '15px',
                 fontWeight: '800',
                 color: '#856404',
-                margin: '0 0 12px 0',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
+                margin: '0 0 12px 0'
               }}>
-                <i style={{ fontSize: '18px' }} className="lni lni-warning"></i>
                 Información Importante
               </h3>
               {advertencias.map((adv, idx) => (
@@ -863,12 +822,7 @@ export default function RadicacionPYLanding() {
             fontWeight: '500',
             animation: 'fadeInUp 0.6s ease-out 0.1s both'
           }}>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <i style={{ fontSize: '16px', minWidth: '16px' }} className="lni lni-info"></i>
-              <div>
-                <strong>Nota Importante:</strong> La emisión del carnet tarda entre 60-90 días hábiles. La cédula paraguaya se gestiona después y tarda aprox. 45 días adicionales.
-              </div>
-            </div>
+            <strong>Nota Importante:</strong> La emisión del carnet tarda entre 60-90 días hábiles. La cédula paraguaya se gestiona después y tarda aprox. 45 días adicionales.
           </div>
 
           {/* Clasificación */}
@@ -898,13 +852,9 @@ export default function RadicacionPYLanding() {
                 </div>
                 <div style={{
                   fontSize: '20px',
-                  fontWeight: '800',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px'
+                  fontWeight: '800'
                 }}>
-                  <i style={{ fontSize: '24px', color: COLORES.verde }} className="lni lni-checkmark-circle"></i>
-                  <span>{clasificacion}</span>
+                  {clasificacion}
                 </div>
               </div>
               {aranceles && (
@@ -1010,8 +960,12 @@ export default function RadicacionPYLanding() {
               }
             }}
           >
-            <i style={{ fontSize: '18px' }} className="lni lni-whatsapp"></i>
-            Enviar a mi Gestor por WhatsApp
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
+              <path fill="#fff" d="M4.9,43.3l2.7-9.8C5.9,30.6,5,27.3,5,24C5,13.5,13.5,5,24,5c5.1,0,9.8,2,13.4,5.6C41,14.2,43,18.9,43,24c0,10.5-8.5,19-19,19c0,0,0,0,0,0h0c-3.2,0-6.3-0.8-9.1-2.3L4.9,43.3z"></path>
+              <path fill="#40c351" d="M35.2,12.8c-3-3-6.9-4.6-11.2-4.6C15.3,8.2,8.2,15.3,8.2,24c0,3,0.8,5.9,2.4,8.4L11,33l-1.6,5.8l6-1.6l0.6,0.3c2.4,1.4,5.2,2.2,8,2.2h0c8.7,0,15.8-7.1,15.8-15.8C39.8,19.8,38.2,15.8,35.2,12.8z"></path>
+              <path fill="#fff" fillRule="evenodd" d="M19.3,16c-0.4-0.8-0.7-0.8-1.1-0.8c-0.3,0-0.6,0-0.9,0s-0.8,0.1-1.3,0.6c-0.4,0.5-1.7,1.6-1.7,4s1.7,4.6,1.9,4.9s3.3,5.3,8.1,7.2c4,1.6,4.8,1.3,5.7,1.2c0.9-0.1,2.8-1.1,3.2-2.3c0.4-1.1,0.4-2.1,0.3-2.3c-0.1-0.2-0.4-0.3-0.9-0.6s-2.8-1.4-3.2-1.5c-0.4-0.2-0.8-0.2-1.1,0.2c-0.3,0.5-1.2,1.5-1.5,1.9c-0.3,0.3-0.6,0.4-1,0.1c-0.5-0.2-2-0.7-3.8-2.4c-1.4-1.3-2.4-2.8-2.6-3.3c-0.3-0.5,0-0.7,0.2-1c0.2-0.2,0.5-0.6,0.7-0.8c0.2-0.3,0.3-0.5,0.5-0.8c0.2-0.3,0.1-0.6,0-0.8C20.6,19.3,19.7,17,19.3,16z" clipRule="evenodd"></path>
+            </svg>
+            Enviar Formulario
           </button>
         </div>
       </div>
@@ -1035,13 +989,11 @@ export default function RadicacionPYLanding() {
           gap: '10px',
           animation: 'slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
           maxWidth: '520px',
-          margin: '0 auto',
           zIndex: 1000,
           left: '50%',
           transform: 'translateX(-50%)',
           width: 'calc(100% - 32px)'
         }}>
-          <i style={{ fontSize: '20px', minWidth: '20px' }} className="lni lni-checkmark-circle"></i>
           <div>
             <strong>¡Mensaje enviado!</strong>
             <div style={{ fontSize: '12px', opacity: '0.9' }}>Revisa tu WhatsApp ahora</div>
