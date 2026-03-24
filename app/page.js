@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { FileUp, AlertCircle, CheckCircle2, Info } from 'lucide-react';
+import { FileUp, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function RadicacionPYLanding() {
   const [formData, setFormData] = useState({
@@ -17,7 +17,10 @@ export default function RadicacionPYLanding() {
       nacimiento: false,
       antecedentes: false,
       matrimonio: false,
-      foto:false,
+      foto: false,
+      ruc: false,
+      carnetParaguayo: false,
+      cedulaParaguaya: false,
     },
     archivos: {
       pasaporte: null,
@@ -25,6 +28,9 @@ export default function RadicacionPYLanding() {
       antecedentes: null,
       matrimonio: null,
       foto: null,
+      ruc: null,
+      carnetParaguayo: null,
+      cedulaParaguaya: null,
     }
   });
 
@@ -33,13 +39,11 @@ export default function RadicacionPYLanding() {
   const [aranceles, setAranceles] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  // CONFIG: Editable por cada gestor
   const GESTOR_CONFIG = {
     nombre: 'Abraham Kohan',
     whatsapp: '+595982000808',
     email: 'info@abrahamkohan.com.py',
     empresa: '',
-    logo: 'https://abrahamkohan.com.py/_next/image?url=%2Flogo.png&w=48&q=75',
   };
 
   const COLORES = {
@@ -65,14 +69,80 @@ export default function RadicacionPYLanding() {
     'Otro País (Ley General)'
   ];
 
-  // Lógica de clasificación
+  // Documentos por tipo de radicación
+  const documentosPorTipo = {
+    nuevo: [
+      { 
+        key: 'pasaporte', 
+        label: 'DNI, ID o Pasaporte Vigente',
+        desc: 'Fotografía frente y dorso',
+        accept: '.pdf,.jpg,.jpeg,.png'
+      },
+      { 
+        key: 'nacimiento', 
+        label: 'Nacimiento Apostillado',
+        desc: 'Obligatorio por Convención de La Haya',
+        accept: '.pdf,.jpg,.jpeg,.png'
+      },
+      { 
+        key: 'antecedentes', 
+        label: 'Antecedentes Apostillados',
+        desc: 'Solo si eres mayor de 14 años',
+        accept: '.pdf,.jpg,.jpeg,.png'
+      },
+      { 
+        key: 'matrimonio', 
+        label: 'Certificado de Matrimonio/Divorcio',
+        desc: 'Solo si no eres soltero/a',
+        accept: '.pdf,.jpg,.jpeg,.png'
+      },
+      { 
+        key: 'foto', 
+        label: 'Foto Carnet',
+        desc: 'Digital, sacada con celular para uso interno',
+        accept: '.jpg,.jpeg,.png'
+      },
+    ],
+    permanente: [
+      { 
+        key: 'pasaporte', 
+        label: 'DNI o Pasaporte Vigente',
+        desc: 'Debe estar vigente',
+        accept: '.pdf,.jpg,.jpeg,.png'
+      },
+      { 
+        key: 'foto', 
+        label: 'Foto Tipo Carnet',
+        desc: 'Digital, sacada con celular para uso interno',
+        accept: '.jpg,.jpeg,.png'
+      },
+      { 
+        key: 'ruc', 
+        label: 'RUC / Libros de Actas O Título Universitario',
+        desc: 'Para demostrar Solvencia en el Pais (Paraguay)',
+        accept: '.pdf,.jpg,.jpeg,.png'
+      },
+      { 
+        key: 'carnetParaguayo', 
+        label: 'Carnet de Admisión Temporal Paraguaya',
+        desc: 'Fotografía frente y dorso',
+        accept: '.pdf,.jpg,.jpeg,.png'
+      },
+      { 
+        key: 'cedulaParaguaya', 
+        label: 'Cédula Paraguaya',
+        desc: 'Fotografía frente y dorso',
+        accept: '.pdf,.jpg,.jpeg,.png'
+      },
+    ]
+  };
+
   useEffect(() => {
     const nuevasAdvertencias = [];
     let tipoRadicacion = null;
     let arancel = null;
 
     if (formData.nacionalidad && formData.edad && formData.estadoCivil) {
-      // Mercosur vs Ley General
       const esMercosur = 
         formData.nacionalidad.includes('Argentina') ||
         formData.nacionalidad.includes('Brasil') ||
@@ -87,7 +157,6 @@ export default function RadicacionPYLanding() {
         tipoRadicacion = 'Ley General';
       }
 
-      // Advertencia: No brasileños necesitan traducción jurada
       if (formData.nacionalidad !== 'Brasil (Mercosur)') {
         nuevasAdvertencias.push({
           tipo: 'traduccion',
@@ -95,7 +164,6 @@ export default function RadicacionPYLanding() {
         });
       }
 
-      // Advertencia: Menores de 14 años
       if (parseInt(formData.edad) < 14) {
         nuevasAdvertencias.push({
           tipo: 'antecedentes',
@@ -103,7 +171,6 @@ export default function RadicacionPYLanding() {
         });
       }
 
-      // Advertencia: Estado civil
       if (formData.estadoCivil !== 'Soltero/a') {
         nuevasAdvertencias.push({
           tipo: 'matrimonio',
@@ -111,7 +178,6 @@ export default function RadicacionPYLanding() {
         });
       }
 
-      // Categoría de residencia
       if (formData.carnetTemporal) {
         tipoRadicacion += ' → Permanente';
       } else if (formData.esInversor) {
@@ -170,13 +236,16 @@ export default function RadicacionPYLanding() {
           nacimiento: 'Nacimiento Apostillado',
           antecedentes: 'Antecedentes Penales',
           matrimonio: 'Cert. Matrimonio/Divorcio',
-          foto: 'Foto tipo Canet',
+          foto: 'Foto tipo Carnet',
+          ruc: 'RUC/Título Universitario',
+          carnetParaguayo: 'Carnet Temporal Paraguayo',
+          cedulaParaguaya: 'Cédula Paraguaya',
         };
         return labels[key] || key;
       })
       .join('\n• ');
 
-    const mensaje = `Hola, he completado mi evaluación de radicación:\n\n📋 *Datos Personales*\nNombre: ${formData.nombre}\nNacionalidad: ${formData.nacionalidad}\nEdad: ${formData.edad} años\n\n🏛️ *Clasificación de Trámite*\n${clasificacion}\n\n💰 **\n${aranceles}\n\n📄 *Documentos Listos*\n• ${documentosListos || 'Aún no completados'}\n\n⚠️ *Observaciones*\n${advertencias.map(a => a.texto).join('\n') || 'Sin observaciones'}\n\nQuiero agendar una consulta.`;
+    const mensaje = `Hola, he completado mi evaluación de radicación:\n\n📋 *Datos Personales*\nNombre: ${formData.nombre}\nNacionalidad: ${formData.nacionalidad}\nEdad: ${formData.edad} años\n\n🏛️ *Clasificación de Trámite*\n${clasificacion}\n\n💰 *Arancel Estimado*\n${aranceles}\n\n📄 *Documentos Listos*\n• ${documentosListos || 'Aún no completados'}\n\n⚠️ *Observaciones*\n${advertencias.map(a => a.texto).join('\n') || 'Sin observaciones'}\n\nQuiero agendar una consulta.`;
 
     const numeroLimpio = GESTOR_CONFIG.whatsapp.replace(/\D/g, '');
     const urlWhatsApp = `https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`;
@@ -185,6 +254,8 @@ export default function RadicacionPYLanding() {
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 3000);
   };
+
+  const documentosActuales = formData.carnetTemporal ? documentosPorTipo.permanente : documentosPorTipo.nuevo;
 
   const formularioCompleto = 
     formData.nombre && 
@@ -195,66 +266,44 @@ export default function RadicacionPYLanding() {
     Object.values(formData.documentos).some(v => v);
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#ffffff',
-      fontFamily: "'Segoe UI', 'Helvetica Neue', sans-serif",
-      color: COLORES.navy
-    }}>
+    <div style={{ minHeight: '100vh', background: '#ffffff', fontFamily: "'Segoe UI', 'Helvetica Neue', sans-serif", color: COLORES.navy }}>
+      
       {/* Navbar */}
       <nav style={{
-  padding: '16px 24px',
-  borderBottom: `3px solid ${COLORES.rojo}`,
-  background: '#ffffff',
-  boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-}}>
-  <div style={{
-    maxWidth: '900px',
-    margin: '0 auto',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  }}>
+        padding: '16px',
+        borderBottom: `3px solid ${COLORES.rojo}`,
+        background: '#ffffff',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+      }}>
+        <div style={{
+          maxWidth: '900px',
+          margin: '0 auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 16px'
+        }}>
+          <div style={{ fontSize: '16px', fontWeight: '700', letterSpacing: '1px' }}>
+            <span style={{ color: COLORES.rojo }}>PARAGUAY</span>{' '}
+            <span style={{ color: COLORES.navy }}>MIGRACIONES</span>
+          </div>
+          <div style={{ fontSize: '11px', color: COLORES.gris_medio, fontWeight: '500' }}>
+            Ley Nº 6984/22
+          </div>
+        </div>
+      </nav>
 
-    {/* Logo */}
-    <div style={{
-      fontSize: '18px',
-      fontWeight: '700',
-      letterSpacing: '1px'
-    }}>
-      <span style={{ color: COLORES.rojo }}>
-        PARAGUAY
-      </span>{' '}
-      <span style={{ color: COLORES.navy }}>
-        MIGRACIONES
-      </span>
-    </div>
-
-    {/* Ley */}
-    <div style={{
-      fontSize: '11px',
-      color: COLORES.gris_medio,
-      fontWeight: '500'
-    }}>
-      Ley Nº 6984/22
-    </div>
-
-  </div>
-</nav>
       {/* Main */}
       <main style={{
         maxWidth: '900px',
         margin: '0 auto',
-        padding: '48px 24px'
+        padding: '32px 16px 48px 16px',
       }}>
         
         {/* Header */}
-        <div style={{ 
-          textAlign: 'center', 
-          marginBottom: '48px'
-        }}>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <h1 style={{
-            fontSize: '36px',
+            fontSize: 'clamp(24px, 8vw, 36px)',
             fontWeight: '700',
             color: COLORES.navy,
             margin: '0 0 16px 0',
@@ -277,15 +326,15 @@ export default function RadicacionPYLanding() {
         <div style={{
           background: '#ffffff',
           border: `1px solid #e0e0e0`,
-          borderRadius: '8px',
-          padding: '40px',
+          borderRadius: '12px',
+          padding: 'clamp(20px, 5vw, 40px)',
           marginBottom: '32px'
         }}>
           
           {/* Sección 1: Datos Básicos */}
           <div style={{ marginBottom: '40px' }}>
             <h2 style={{
-              fontSize: '16px',
+              fontSize: '18px',
               fontWeight: '700',
               color: COLORES.navy,
               margin: '0 0 24px 0',
@@ -314,10 +363,11 @@ export default function RadicacionPYLanding() {
                 placeholder="Tu nombre completo"
                 style={{
                   width: '100%',
-                  padding: '10px 12px',
+                  padding: '12px 14px',
+                  minHeight: '44px',
                   border: `1px solid #ddd`,
-                  borderRadius: '6px',
-                  fontSize: '14px',
+                  borderRadius: '8px',
+                  fontSize: '16px',
                   fontFamily: 'inherit',
                   boxSizing: 'border-box',
                   transition: 'border 0.2s'
@@ -327,8 +377,16 @@ export default function RadicacionPYLanding() {
               />
             </div>
 
-            {/* Grid: Nacionalidad + Residencia */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+            {/* Grid: Nacionalidad + Residencia - responsive */}
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '1fr', 
+              gap: '20px', 
+              marginBottom: '20px',
+              '@media (min-width: 768px)': {
+                gridTemplateColumns: '1fr 1fr'
+              }
+            }}>
               <div>
                 <label style={{ 
                   display: 'block', 
@@ -345,10 +403,11 @@ export default function RadicacionPYLanding() {
                   onChange={handleInputChange}
                   style={{
                     width: '100%',
-                    padding: '10px 12px',
+                    padding: '12px 14px',
+                    minHeight: '44px',
                     border: `2px solid #ddd`,
-                    borderRadius: '6px',
-                    fontSize: '14px',
+                    borderRadius: '8px',
+                    fontSize: '16px',
                     fontFamily: 'inherit',
                     backgroundColor: 'white',
                     cursor: 'pointer',
@@ -382,10 +441,11 @@ export default function RadicacionPYLanding() {
                   placeholder="Dónde vives ahora"
                   style={{
                     width: '100%',
-                    padding: '10px 12px',
+                    padding: '12px 14px',
+                    minHeight: '44px',
                     border: `1px solid #ddd`,
-                    borderRadius: '6px',
-                    fontSize: '14px',
+                    borderRadius: '8px',
+                    fontSize: '16px',
                     fontFamily: 'inherit',
                     boxSizing: 'border-box',
                     transition: 'border 0.2s'
@@ -396,8 +456,15 @@ export default function RadicacionPYLanding() {
               </div>
             </div>
 
-            {/* Grid: Edad + Estado Civil */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            {/* Grid: Edad + Estado Civil - responsive */}
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '1fr',
+              gap: '20px',
+              '@media (min-width: 768px)': {
+                gridTemplateColumns: '1fr 1fr'
+              }
+            }}>
               <div>
                 <label style={{ 
                   display: 'block', 
@@ -418,10 +485,11 @@ export default function RadicacionPYLanding() {
                   max="120"
                   style={{
                     width: '100%',
-                    padding: '10px 12px',
+                    padding: '12px 14px',
+                    minHeight: '44px',
                     border: `1px solid #ddd`,
-                    borderRadius: '6px',
-                    fontSize: '14px',
+                    borderRadius: '8px',
+                    fontSize: '16px',
                     fontFamily: 'inherit',
                     boxSizing: 'border-box',
                     transition: 'border 0.2s'
@@ -447,10 +515,11 @@ export default function RadicacionPYLanding() {
                   onChange={handleInputChange}
                   style={{
                     width: '100%',
-                    padding: '10px 12px',
+                    padding: '12px 14px',
+                    minHeight: '44px',
                     border: `1px solid #ddd`,
-                    borderRadius: '6px',
-                    fontSize: '14px',
+                    borderRadius: '8px',
+                    fontSize: '16px',
                     fontFamily: 'inherit',
                     backgroundColor: 'white',
                     cursor: 'pointer',
@@ -474,15 +543,15 @@ export default function RadicacionPYLanding() {
           <div style={{ 
             background: COLORES.rojo_claro,
             border: `2px solid ${COLORES.rojo}`,
-            borderRadius: '8px',
-            padding: '20px',
+            borderRadius: '12px',
+            padding: '24px 20px',
             marginBottom: '40px'
           }}>
             <h3 style={{
-              fontSize: '15px',
+              fontSize: '16px',
               fontWeight: '700',
               color: COLORES.rojo,
-              margin: '0 0 16px 0',
+              margin: '0 0 20px 0',
               display: 'flex',
               alignItems: 'center',
               gap: '8px'
@@ -495,19 +564,25 @@ export default function RadicacionPYLanding() {
                 <label style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '10px',
+                  gap: '12px',
                   cursor: 'pointer',
                   fontWeight: '500',
-                  fontSize: '14px'
-                }}>
+                  fontSize: '15px',
+                  padding: '10px',
+                  borderRadius: '8px',
+                  transition: 'background 0.2s',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.05)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                >
                   <input
                     type="radio"
                     name="carnetTemporal"
                     checked={!formData.carnetTemporal}
                     onChange={() => setFormData(prev => ({ ...prev, carnetTemporal: false }))}
-                    style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: COLORES.azul_info }}
+                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: COLORES.azul_info, minWidth: '18px' }}
                   />
-                  No tengo Carnet de Admisión Temporal (Nuevo)
+                  <span>No tengo Carnet de Admisión Temporal (Nuevo)</span>
                 </label>
               </div>
 
@@ -515,19 +590,25 @@ export default function RadicacionPYLanding() {
                 <label style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '10px',
+                  gap: '12px',
                   cursor: 'pointer',
                   fontWeight: '500',
-                  fontSize: '14px'
-                }}>
+                  fontSize: '15px',
+                  padding: '10px',
+                  borderRadius: '8px',
+                  transition: 'background 0.2s',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.05)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                >
                   <input
                     type="radio"
                     name="carnetTemporal"
                     checked={formData.carnetTemporal}
                     onChange={() => setFormData(prev => ({ ...prev, carnetTemporal: true }))}
-                    style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: COLORES.azul_info }}
+                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: COLORES.azul_info, minWidth: '18px' }}
                   />
-                  Sí tengo Carnet (Pasando a Permanente)
+                  <span>Sí tengo Carnet (Pasando a Permanente)</span>
                 </label>
               </div>
 
@@ -535,74 +616,56 @@ export default function RadicacionPYLanding() {
                 <label style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '10px',
+                  gap: '12px',
                   cursor: 'pointer',
                   fontWeight: '500',
-                  fontSize: '14px'
-                }}>
+                  fontSize: '15px',
+                  padding: '10px',
+                  borderRadius: '8px',
+                  transition: 'background 0.2s',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.05)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                >
                   <input
                     type="checkbox"
                     name="esInversor"
                     checked={formData.esInversor}
                     onChange={handleInputChange}
-                    style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: COLORES.azul_info }}
+                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: COLORES.azul_info, minWidth: '18px' }}
                   />
-                  Planeo invertir más de USD 70.000 (SUACE) [3]
+                  <span>Planeo invertir más de USD 70.000 (SUACE)</span>
                 </label>
               </div>
             </div>
           </div>
 
-          {/* Sección 3: Documentos */}
+          {/* Sección 3: Documentos - responsive */}
           <div style={{ marginBottom: '40px' }}>
             <h2 style={{
-              fontSize: '16px',
+              fontSize: '18px',
               fontWeight: '700',
               color: COLORES.navy,
               margin: '0 0 24px 0',
               paddingBottom: '12px',
               borderBottom: `2px solid ${COLORES.gris_claro}`
             }}>
-              ¿Con qué documentos cuentas hoy? (País de Origen)
+              {formData.carnetTemporal ? 'Documentos para Radicación Permanente' : '¿Con qué documentos cuentas hoy?'}
             </h2>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-              {[
-                { 
-                  key: 'pasaporte', 
-                  label: 'DNI, ID o Pasaporte Vigente',
-                  desc: 'Debe ser original',
-                  accept: '.pdf,.jpg,.jpeg,.png'
-                },
-                { 
-                  key: 'nacimiento', 
-                  label: 'Nacimiento Apostillado',
-                  desc: 'Obligatorio por Convención de La Haya',
-                  accept: '.pdf,.jpg,.jpeg,.png'
-                },
-                { 
-                  key: 'antecedentes', 
-                  label: 'Antecedentes Apostillados',
-                  desc: 'Solo si eres mayor de 14 años',
-                  accept: '.pdf,.jpg,.jpeg,.png'
-                },
-                  { 
-                  key: 'matrimonio', 
-                  label: 'Certificado de Matrimonio/Divorcio',
-                  desc: 'Solo si no eres soltero/a',
-                  accept: '.pdf,.jpg,.jpeg,.png'
-                },
-                { 
-                  key: 'foto', 
-                  label: 'Foto Carnet',
-                  desc: 'Sacada con celular, solo para uso interno',
-                  accept: '.pdf,.jpg,.jpeg,.png'
-                },
-              ].map(doc => (
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '1fr',
+              gap: '16px',
+              '@media (min-width: 768px)': {
+                gridTemplateColumns: '1fr 1fr'
+              }
+            }}>
+              {documentosActuales.map(doc => (
                 <div key={doc.key} style={{
                   border: `1px solid #e0e0e0`,
-                  borderRadius: '6px',
-                  padding: '16px',
+                  borderRadius: '12px',
+                  padding: '20px',
                   transition: 'all 0.2s',
                   cursor: 'pointer',
                   background: '#fafafa'
@@ -610,54 +673,56 @@ export default function RadicacionPYLanding() {
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = COLORES.rojo;
                   e.currentTarget.style.background = '#fff';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.borderColor = '#e0e0e0';
                   e.currentTarget.style.background = '#fafafa';
+                  e.currentTarget.style.boxShadow = 'none';
                 }}
                 >
                   <label style={{ cursor: 'pointer' }}>
                     <div style={{
                       display: 'flex',
                       alignItems: 'flex-start',
-                      gap: '10px',
-                      marginBottom: '8px',
+                      gap: '12px',
+                      marginBottom: '12px',
                       fontWeight: '600',
-                      fontSize: '14px'
+                      fontSize: '15px'
                     }}>
                       <input
                         type="checkbox"
                         name={`doc_${doc.key}`}
                         checked={formData.documentos[doc.key]}
                         onChange={handleInputChange}
-                        style={{ width: '16px', height: '16px', cursor: 'pointer', marginTop: '2px' }}
+                        style={{ width: '18px', height: '18px', cursor: 'pointer', marginTop: '2px', minWidth: '18px' }}
                       />
                       <span>{doc.label}</span>
                     </div>
                   </label>
 
-                  <div style={{ fontSize: '12px', color: COLORES.gris_medio, marginBottom: '8px' }}>
+                  <div style={{ fontSize: '13px', color: COLORES.gris_medio, marginBottom: '12px', lineHeight: '1.5' }}>
                     {doc.desc}
                   </div>
 
                   {formData.documentos[doc.key] && (
                     <div style={{
-                      marginTop: '10px',
-                      padding: '10px',
+                      marginTop: '12px',
+                      padding: '12px',
                       background: '#E8F5E9',
-                      borderRadius: '6px',
+                      borderRadius: '8px',
                       border: '1px dashed #4CAF50'
                     }}>
                       <label style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '6px',
+                        gap: '8px',
                         cursor: 'pointer',
                         color: '#2E7D32',
-                        fontSize: '12px',
+                        fontSize: '13px',
                         fontWeight: '500'
                       }}>
-                        <FileUp size={14} />
+                        <FileUp size={16} />
                         {formData.archivos[doc.key] ? '✓ Archivo cargado' : 'Cargar archivo (PDF/JPG)'}
                         <input
                           type="file"
@@ -668,10 +733,11 @@ export default function RadicacionPYLanding() {
                       </label>
                       {formData.archivos[doc.key] && (
                         <div style={{
-                          fontSize: '11px',
+                          fontSize: '12px',
                           color: '#2E7D32',
-                          marginTop: '6px',
-                          fontWeight: '500'
+                          marginTop: '8px',
+                          fontWeight: '500',
+                          wordBreak: 'break-word'
                         }}>
                           📎 {formData.archivos[doc.key].name}
                         </div>
@@ -688,28 +754,28 @@ export default function RadicacionPYLanding() {
             <div style={{
               background: '#FFF3CD',
               border: `2px solid #ffc107`,
-              borderRadius: '6px',
-              padding: '16px',
+              borderRadius: '12px',
+              padding: '20px',
               marginBottom: '40px'
             }}>
               <h3 style={{
-                fontSize: '14px',
+                fontSize: '15px',
                 fontWeight: '700',
                 color: '#856404',
-                margin: '0 0 10px 0',
+                margin: '0 0 12px 0',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px'
               }}>
-                <AlertCircle size={16} />
+                <AlertCircle size={18} />
                 Información Importante
               </h3>
               {advertencias.map((adv, idx) => (
                 <div key={idx} style={{
-                  fontSize: '13px',
+                  fontSize: '14px',
                   color: '#856404',
-                  marginBottom: idx < advertencias.length - 1 ? '6px' : '0',
-                  lineHeight: '1.4'
+                  marginBottom: idx < advertencias.length - 1 ? '8px' : '0',
+                  lineHeight: '1.5'
                 }}>
                   {adv.texto}
                 </div>
@@ -721,14 +787,14 @@ export default function RadicacionPYLanding() {
           <div style={{
             background: '#E3F2FD',
             border: `2px solid ${COLORES.azul_info}`,
-            borderRadius: '6px',
-            padding: '16px',
+            borderRadius: '12px',
+            padding: '20px',
             marginBottom: '32px',
-            fontSize: '12px',
+            fontSize: '13px',
             color: '#1565C0',
-            lineHeight: '1.5'
+            lineHeight: '1.6'
           }}>
-            <strong>📌 Nota:</strong> La emisión del carnet tarda entre 60 y 90 días hábiles. La cédula paraguaya se gestiona después y tarda aprox. 45 días adicionales [9, 10].
+            <strong>📌 Nota:</strong> La emisión del carnet tarda entre 60 y 90 días hábiles. La cédula paraguaya se gestiona después y tarda aprox. 45 días adicionales.
           </div>
 
           {/* Clasificación */}
@@ -736,15 +802,18 @@ export default function RadicacionPYLanding() {
             <div style={{
               background: COLORES.navy,
               color: 'white',
-              borderRadius: '6px',
-              padding: '20px',
+              borderRadius: '12px',
+              padding: '24px 20px',
               marginBottom: '32px',
               display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '20px'
+              gridTemplateColumns: '1fr',
+              gap: '20px',
+              '@media (min-width: 768px)': {
+                gridTemplateColumns: '1fr 1fr'
+              }
             }}>
               <div>
-                <div style={{ fontSize: '11px', opacity: '0.8', marginBottom: '4px' }}>Tu Categoría</div>
+                <div style={{ fontSize: '11px', opacity: '0.8', marginBottom: '6px', textTransform: 'uppercase', fontWeight: '600' }}>Tu Categoría</div>
                 <div style={{
                   fontSize: '18px',
                   fontWeight: '700',
@@ -752,18 +821,18 @@ export default function RadicacionPYLanding() {
                   alignItems: 'center',
                   gap: '8px'
                 }}>
-                  <CheckCircle2 size={22} style={{ color: COLORES.verde }} />
-                  {clasificacion}
+                  <CheckCircle2 size={24} style={{ color: COLORES.verde, minWidth: '24px' }} />
+                  <span>{clasificacion}</span>
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: '11px', opacity: '0.8', marginBottom: '4px' }}></div>
+                <div style={{ fontSize: '11px', opacity: '0.8', marginBottom: '6px', textTransform: 'uppercase', fontWeight: '600' }}>Arancel</div>
                 <div style={{
                   fontSize: '18px',
                   fontWeight: '700',
                   color: COLORES.verde
                 }}>
-                  {aranceles}
+                  {aranceles || '—'}
                 </div>
               </div>
             </div>
@@ -775,45 +844,51 @@ export default function RadicacionPYLanding() {
             disabled={!formularioCompleto}
             style={{
               width: '100%',
-              padding: '14px 20px',
+              minHeight: '54px',
+              padding: '16px 20px',
               background: formularioCompleto ? COLORES.verde : '#ccc',
               color: 'white',
               border: 'none',
-              borderRadius: '6px',
-              fontSize: '15px',
+              borderRadius: '10px',
+              fontSize: '16px',
               fontWeight: '700',
               cursor: formularioCompleto ? 'pointer' : 'not-allowed',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '10px',
-              transition: 'all 0.2s',
-              letterSpacing: '0.3px'
+              transition: 'all 0.3s',
+              letterSpacing: '0.3px',
+              boxShadow: formularioCompleto ? '0 4px 12px rgba(39, 174, 96, 0.3)' : 'none'
             }}
             onMouseEnter={(e) => {
               if (formularioCompleto) {
                 e.target.style.background = '#229954';
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 6px 16px rgba(39, 174, 96, 0.4)';
               }
             }}
             onMouseLeave={(e) => {
               if (formularioCompleto) {
                 e.target.style.background = COLORES.verde;
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 4px 12px rgba(39, 174, 96, 0.3)';
               }
             }}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-5.031 1.378c-3.055 2.289-5.134 5.943-5.134 9.843 0 1.131.113 2.268.333 3.372l-.52 1.897 1.954-.512c1.289.703 2.759 1.073 4.367 1.073 5.522 0 10-4.477 10-10S17.324 2 11.802 2c-3.763 0-7.303 2.191-8.934 5.66"/>
             </svg>
             Enviar a mi Gestor por WhatsApp
           </button>
 
           <div style={{
-            fontSize: '11px',
+            fontSize: '12px',
             color: COLORES.gris_medio,
             textAlign: 'center',
-            marginTop: '12px'
+            marginTop: '14px'
           }}>
-            Completa todos los campos y confirma al menos 1 documento para enviar
+            Completa todos los campos y confirma al menos 1 documento
           </div>
         </div>
 
@@ -822,22 +897,25 @@ export default function RadicacionPYLanding() {
           <div style={{
             position: 'fixed',
             bottom: '24px',
-            left: '50%',
-            transform: 'translateX(-50%)',
+            left: '16px',
+            right: '16px',
             background: COLORES.verde,
             color: 'white',
-            padding: '12px 20px',
-            borderRadius: '6px',
+            padding: '14px 20px',
+            borderRadius: '10px',
             fontSize: '14px',
             fontWeight: '600',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
-            animation: 'slideUp 0.3s ease-out'
+            gap: '10px',
+            animation: 'slideUp 0.3s ease-out',
+            maxWidth: '600px',
+            margin: '0 auto',
+            zIndex: 1000
           }}>
-            <CheckCircle2 size={18} />
-            ¡Mensaje enviado! Revisa tu WhatsApp
+            <CheckCircle2 size={20} style={{ minWidth: '20px' }} />
+            <span>¡Mensaje enviado! Revisa tu WhatsApp</span>
           </div>
         )}
 
@@ -861,11 +939,17 @@ export default function RadicacionPYLanding() {
         @keyframes slideUp {
           from {
             opacity: 0;
-            transform: translateX(-50%) translateY(20px);
+            transform: translateY(20px);
           }
           to {
             opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            transform: translateY(0);
+          }
+        }
+        
+        @media (max-width: 767px) {
+          input, select {
+            font-size: 16px;
           }
         }
       `}</style>
