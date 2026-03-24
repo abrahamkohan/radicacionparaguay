@@ -78,10 +78,10 @@ export default function RadicacionPYLanding() {
         formData.nacionalidad.includes('Bolivia');
 
       if (esMercosur) {
-        arancel = 'Gs. 2.230.040';
+        arancel = ';
         tipoRadicacion = 'Mercosur';
       } else {
-        arancel = 'Gs. 2.787.550';
+        arancel = '';
         tipoRadicacion = 'Ley General';
       }
 
@@ -173,7 +173,7 @@ export default function RadicacionPYLanding() {
       })
       .join('\n• ');
 
-    const mensaje = `Hola, he completado mi evaluación de radicación:\n\n📋 *Datos Personales*\nNombre: ${formData.nombre}\nNacionalidad: ${formData.nacionalidad}\nEdad: ${formData.edad} años\n\n🏛️ *Clasificación de Trámite*\n${clasificacion}\n\n💰 *Arancel Estimado*\n${aranceles}\n\n📄 *Documentos Listos*\n• ${documentosListos || 'Aún no completados'}\n\n⚠️ *Observaciones*\n${advertencias.map(a => a.texto).join('\n') || 'Sin observaciones'}\n\nQuiero agendar una consulta.`;
+    const mensaje = `Hola, he completado mi evaluación de radicación:\n\n📋 *Datos Personales*\nNombre: ${formData.nombre}\nNacionalidad: ${formData.nacionalidad}\nEdad: ${formData.edad} años\n\n🏛️ *Clasificación de Trámite*\n${clasificacion}\n\n💰 **\n${aranceles}\n\n📄 *Documentos Listos*\n• ${documentosListos || 'Aún no completados'}\n\n⚠️ *Observaciones*\n${advertencias.map(a => a.texto).join('\n') || 'Sin observaciones'}\n\nQuiero agendar una consulta.`;
 
     const numeroLimpio = GESTOR_CONFIG.whatsapp.replace(/\D/g, '');
     const urlWhatsApp = `https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`;
@@ -741,7 +741,7 @@ export default function RadicacionPYLanding() {
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: '11px', opacity: '0.8', marginBottom: '4px' }}>Arancel Estimado</div>
+                <div style={{ fontSize: '11px', opacity: '0.8', marginBottom: '4px' }}></div>
                 <div style={{
                   fontSize: '18px',
                   fontWeight: '700',
