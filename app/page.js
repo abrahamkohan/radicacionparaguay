@@ -715,45 +715,7 @@ export default function RadicacionPYLanding() {
             <strong>📌 Nota:</strong> La emisión del carnet tarda entre 60 y 90 días hábiles. La cédula paraguaya se gestiona después y tarda aprox. 45 días adicionales [9, 10].
           </div>
 
-          {/* Clasificación */}
-          {clasificacion && (
-            <div style={{
-              background: COLORES.navy,
-              color: 'white',
-              borderRadius: '6px',
-              padding: '20px',
-              marginBottom: '32px',
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '20px'
-            }}>
-              <div>
-                <div style={{ fontSize: '11px', opacity: '0.8', marginBottom: '4px' }}>Tu Categoría</div>
-                <div style={{
-                  fontSize: '18px',
-                  fontWeight: '700',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}>
-                  <CheckCircle2 size={22} style={{ color: COLORES.verde }} />
-                  {clasificacion}
-                </div>
-              </div>
-              <div>
-                <div style={{ fontSize: '11px', opacity: '0.8', marginBottom: '4px' }}>Arancel Estimado</div>
-                <div style={{
-                  fontSize: '18px',
-                  fontWeight: '700',
-                  color: COLORES.verde
-                }}>
-                  {aranceles}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Botón WhatsApp */}
+        {/* Botón WhatsApp */}
           <button
             onClick={generarMensajeWhatsApp}
             disabled={!formularioCompleto}
