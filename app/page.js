@@ -16,8 +16,8 @@ export default function RadicacionPYLanding() {
       pasaporte: false,
       nacimiento: false,
       antecedentes: false,
-      matrimonio: false
-      foto:false
+      matrimonio: false,
+      foto:false,
     },
     archivos: {
       pasaporte: null,
