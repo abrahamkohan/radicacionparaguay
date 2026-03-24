@@ -17,12 +17,14 @@ export default function RadicacionPYLanding() {
       nacimiento: false,
       antecedentes: false,
       matrimonio: false
+      foto:false
     },
     archivos: {
       pasaporte: null,
       nacimiento: null,
       antecedentes: null,
       matrimonio: null
+      foto: null
     }
   });
 
@@ -168,6 +170,7 @@ export default function RadicacionPYLanding() {
           nacimiento: 'Nacimiento Apostillado',
           antecedentes: 'Antecedentes Penales',
           matrimonio: 'Cert. Matrimonio/Divorcio'
+          foto:'Foto tipo Canet'
         };
         return labels[key] || key;
       })
@@ -576,9 +579,15 @@ export default function RadicacionPYLanding() {
                   desc: 'Solo si eres mayor de 14 años [7]',
                   accept: '.pdf,.jpg,.jpeg,.png'
                 },
-                { 
+                  { 
                   key: 'matrimonio', 
                   label: 'Certificado de Matrimonio/Divorcio',
+                  desc: 'Solo si no eres soltero/a [8]',
+                  accept: '.pdf,.jpg,.jpeg,.png'
+                }
+                { 
+                  key: 'foto', 
+                  label: 'Foto tipo Carnet con celular',
                   desc: 'Solo si no eres soltero/a [8]',
                   accept: '.pdf,.jpg,.jpeg,.png'
                 }
