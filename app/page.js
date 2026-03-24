@@ -203,43 +203,44 @@ export default function RadicacionPYLanding() {
     }}>
       {/* Navbar */}
       <nav style={{
-        padding: '16px 24px',
-        borderBottom: `3px solid ${COLORES.rojo}`,
-        background: '#ffffff',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-      }}>
-        <div style={{
-          maxWidth: '900px',
-          margin: '0 auto',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div>
-            <div style={{
-  fontSize: '18px',
-  fontWeight: '700',
-  letterSpacing: '1px',
-  margin: 0
+  padding: '16px 24px',
+  borderBottom: `3px solid ${COLORES.rojo}`,
+  background: '#ffffff',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
 }}>
-  <span style={{ color: COLORES.rojo }}>
-    PARAGUAY
-  </span>{' '}
-  <span style={{ color: COLORES.navy }}>
-    MIGRACIONES
-  </span>
-</div>
-      
-          <div style={{
-            fontSize: '11px',
-            color: COLORES.gris_medio,
-            fontWeight: '500'
-          }}>
-            Ley Nº 6984/22
-          </div>
-        </div>
-      </nav>
+  <div style={{
+    maxWidth: '900px',
+    margin: '0 auto',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  }}>
 
+    {/* Logo */}
+    <div style={{
+      fontSize: '18px',
+      fontWeight: '700',
+      letterSpacing: '1px'
+    }}>
+      <span style={{ color: COLORES.rojo }}>
+        PARAGUAY
+      </span>{' '}
+      <span style={{ color: COLORES.navy }}>
+        MIGRACIONES
+      </span>
+    </div>
+
+    {/* Ley */}
+    <div style={{
+      fontSize: '11px',
+      color: COLORES.gris_medio,
+      fontWeight: '500'
+    }}>
+      Ley Nº 6984/22
+    </div>
+
+  </div>
+</nav>
       {/* Main */}
       <main style={{
         maxWidth: '900px',
