@@ -10,6 +10,7 @@ export default function RadicacionPYLanding() {
     edad: '',
     estadoCivil: '',
     carnetTemporal: false,
+    esInversor: false,
     documentos: {
       pasaporte: false,
       nacimiento: false,
@@ -21,17 +22,14 @@ export default function RadicacionPYLanding() {
       cedulaParaguaya: false,
     },
     archivos: {
-      pasaporte_frente: [],
-      pasaporte_dorso: [],
-      nacimiento: [],
-      antecedentes: [],
-      matrimonio: [],
-      foto: [],
-      ruc: [],
-      carnetParaguayo_frente: [],
-      carnetParaguayo_dorso: [],
-      cedulaParaguaya_frente: [],
-      cedulaParaguaya_dorso: [],
+      pasaporte: null,
+      nacimiento: null,
+      antecedentes: null,
+      matrimonio: null,
+      foto: null,
+      ruc: null,
+      carnetParaguayo: null,
+      cedulaParaguaya: null,
     }
   });
 
@@ -40,7 +38,6 @@ export default function RadicacionPYLanding() {
   const [aranceles, setAranceles] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [formProgress, setFormProgress] = useState(0);
-  const [enviando, setEnviando] = useState(false);
 
   const GESTOR_CONFIG = {
     nombre: 'Abraham Kohan',
@@ -58,7 +55,7 @@ export default function RadicacionPYLanding() {
     azul_info: '#0066CC',
     rojo_claro: '#E8F0FF',
     gris_oscuro: '#2c3e50',
-    bg: '#e6e8eb'
+    bg: '#f8f9fa'
   };
 
   const paises = [
@@ -76,82 +73,18 @@ export default function RadicacionPYLanding() {
 
   const documentosPorTipo = {
     nuevo: [
-      { 
-        key: 'pasaporte', 
-        label: 'DNI, ID o Pasaporte Vigente', 
-        desc: 'Debe ser original', 
-        hasDosCaras: true,
-        accept: '.pdf,.jpg,.jpeg,.png' 
-      },
-      { 
-        key: 'nacimiento', 
-        label: 'Nacimiento Apostillado', 
-        desc: 'Obligatorio por Convención de La Haya', 
-        hasDosCaras: false, 
-        accept: '.pdf,.jpg,.jpeg,.png', 
-        multiple: true 
-      },
-      { 
-        key: 'antecedentes', 
-        label: 'Antecedentes Apostillados', 
-        desc: 'Solo si eres mayor de 14 años', 
-        hasDosCaras: false, 
-        accept: '.pdf,.jpg,.jpeg,.png', 
-        multiple: true 
-      },
-      { 
-        key: 'matrimonio', 
-        label: 'Certificado de Matrimonio/Divorcio', 
-        desc: 'Solo si no eres soltero/a', 
-        hasDosCaras: false, 
-        accept: '.pdf,.jpg,.jpeg,.png', 
-        multiple: true 
-      },
-      { 
-        key: 'foto', 
-        label: 'Foto Carnet', 
-        desc: 'Sacada con celular, solo para uso interno', 
-        hasDosCaras: false, 
-        accept: '.jpg,.jpeg,.png' 
-      },
+      { key: 'pasaporte', label: 'DNI, ID o Pasaporte Vigente', desc: 'Debe ser original', icon: '📋', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'nacimiento', label: 'Nacimiento Apostillado', desc: 'Obligatorio por Convención de La Haya', icon: '📄', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'antecedentes', label: 'Antecedentes Apostillados', desc: 'Solo si eres mayor de 14 años', icon: '🔍', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'matrimonio', label: 'Certificado de Matrimonio/Divorcio', desc: 'Solo si no eres soltero/a', icon: '💍', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'foto', label: 'Foto Carnet', desc: 'Sacada con celular, solo para uso interno', icon: '📸', accept: '.jpg,.jpeg,.png' },
     ],
     permanente: [
-      { 
-        key: 'pasaporte', 
-        label: 'DNI o Pasaporte Vigente', 
-        desc: 'Debe estar vigente', 
-        hasDosCaras: true,
-        accept: '.pdf,.jpg,.jpeg,.png' 
-      },
-      { 
-        key: 'foto', 
-        label: 'Foto Tipo Carnet', 
-        desc: 'Digital, sacada con celular', 
-        hasDosCaras: false, 
-        accept: '.jpg,.jpeg,.png' 
-      },
-      { 
-        key: 'ruc', 
-        label: 'RUC / Libros de Actas O Título Universitario', 
-        desc: 'Apostillado si es título profesional', 
-        hasDosCaras: false, 
-        accept: '.pdf,.jpg,.jpeg,.png', 
-        multiple: true 
-      },
-      { 
-        key: 'carnetParaguayo', 
-        label: 'Carnet de Admisión Temporal Paraguaya', 
-        desc: 'Vigente y en buen estado', 
-        hasDosCaras: true,
-        accept: '.pdf,.jpg,.jpeg,.png' 
-      },
-      { 
-        key: 'cedulaParaguaya', 
-        label: 'Cédula Paraguaya', 
-        desc: 'Opcional, si ya cuenta con ella', 
-        hasDosCaras: true,
-        accept: '.pdf,.jpg,.jpeg,.png' 
-      },
+      { key: 'pasaporte', label: 'DNI o Pasaporte Vigente', desc: 'Debe estar vigente', icon: '📋', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'foto', label: 'Foto Tipo Carnet', desc: 'Digital, sacada con celular', icon: '📸', accept: '.jpg,.jpeg,.png' },
+      { key: 'ruc', label: 'RUC / Libros de Actas O Título Universitario', desc: 'Apostillado si es título profesional', icon: '🏢', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'carnetParaguayo', label: 'Carnet de Admisión Temporal Paraguaya', icon: '🪪', desc: 'Vigente y en buen estado', accept: '.pdf,.jpg,.jpeg,.png' },
+      { key: 'cedulaParaguaya', label: 'Cédula Paraguaya', desc: 'Opcional, si ya cuenta con ella', icon: '🆔', accept: '.pdf,.jpg,.jpeg,.png' },
     ]
   };
 
@@ -184,6 +117,9 @@ export default function RadicacionPYLanding() {
 
       if (formData.carnetTemporal) {
         tipoRadicacion += ' → Permanente';
+      } else if (formData.esInversor) {
+        tipoRadicacion = 'SUACE (Inversión)';
+        arancel = 'Variable según monto';
       } else {
         tipoRadicacion += ' → Temporal';
       }
@@ -193,6 +129,7 @@ export default function RadicacionPYLanding() {
       setAdvertencias(nuevasAdvertencias);
     }
 
+    // Calcular progreso del formulario
     const campos = [formData.nombre, formData.nacionalidad !== 'Selecciona tu país', formData.paisResidencia, formData.edad, formData.estadoCivil];
     const documentosLlenados = Object.values(formData.documentos).filter(v => v).length;
     const totalCampos = campos.filter(Boolean).length + (documentosLlenados > 0 ? 1 : 0);
@@ -224,98 +161,40 @@ export default function RadicacionPYLanding() {
   };
 
   const handleFileUpload = (e, docType) => {
-    const files = e.target.files ? Array.from(e.target.files) : [];
-    if (files.length > 0) {
+    const file = e.target.files?.[0];
+    if (file) {
       setFormData(prev => ({
         ...prev,
-        archivos: { ...prev.archivos, [docType]: files }
+        archivos: { ...prev.archivos, [docType]: file }
       }));
     }
   };
 
-  const generarMensajeWhatsApp = async () => {
-    setEnviando(true);
-
+  const generarMensajeWhatsApp = () => {
     const documentosListos = Object.entries(formData.documentos)
       .filter(([, valor]) => valor)
       .map(([key]) => {
         const labels = {
-          pasaporte: 'Pasaporte/DNI (Frente + Dorso)',
+          pasaporte: 'Pasaporte/DNI/Cédula',
           nacimiento: 'Nacimiento Apostillado',
           antecedentes: 'Antecedentes Penales',
           matrimonio: 'Cert. Matrimonio/Divorcio',
           foto: 'Foto tipo Carnet',
           ruc: 'RUC/Título Universitario',
-          carnetParaguayo: 'Carnet Temporal (Frente + Dorso)',
-          cedulaParaguaya: 'Cédula Paraguaya (Frente + Dorso)',
+          carnetParaguayo: 'Carnet Temporal Paraguayo',
+          cedulaParaguaya: 'Cédula Paraguaya',
         };
         return labels[key] || key;
       })
       .join('\n• ');
 
-    const bloqueArancel = aranceles
-      ? `\n💰 *Arancel Estimado*\n${aranceles}\n`
-      : '';
+    const mensaje = `Hola, he completado mi evaluación de radicación:\n\n📋 *Datos Personales*\nNombre: ${formData.nombre}\nNacionalidad: ${formData.nacionalidad}\nEdad: ${formData.edad} años\n\n🏛️ *Clasificación de Trámite*\n${clasificacion}\n\n💰 *Arancel Estimado*\n${aranceles}\n\n📄 *Documentos Listos*\n• ${documentosListos || 'Aún no completados'}\n\n⚠️ *Observaciones*\n${advertencias.map(a => a.texto).join('\n') || 'Sin observaciones'}\n\nQuiero agendar una consulta.`;
 
-    const mensaje = `Hola, he completado mi evaluación de radicación:
-
-📋 *Datos Personales*
-Nombre: ${formData.nombre}
-Nacionalidad: ${formData.nacionalidad}
-Edad: ${formData.edad} años
-
-🏛️ *Clasificación de Trámite*
-${clasificacion}
-${bloqueArancel}
-📄 *Documentos Listos*
-• ${documentosListos || 'Aún no completados'}
-
-⚠️ *Observaciones*
-${advertencias.map(a => a.texto).join('\n') || 'Sin observaciones'}
-
-Quiero agendar una consulta.`;
-
-    // Preparar FormData para email (Resend)
-    const formDataForEmail = new FormData();
-    formDataForEmail.append('nombre', formData.nombre);
-    formDataForEmail.append('nacionalidad', formData.nacionalidad);
-    formDataForEmail.append('paisResidencia', formData.paisResidencia);
-    formDataForEmail.append('edad', formData.edad);
-    formDataForEmail.append('estadoCivil', formData.estadoCivil);
-    formDataForEmail.append('carnetTemporal', formData.carnetTemporal);
-    formDataForEmail.append('clasificacion', clasificacion);
-    formDataForEmail.append('aranceles', aranceles);
-
-    // Agregar todos los archivos
-    Object.entries(formData.archivos).forEach(([key, files]) => {
-      if (Array.isArray(files)) {
-        files.forEach((file, index) => {
-          formDataForEmail.append(`archivo_${key}`, file);
-        });
-      }
-    });
-
-    // Enviar email con archivos (Resend)
-    try {
-      const response = await fetch('/api/send-email', {
-        method: 'POST',
-        body: formDataForEmail
-      });
-
-      if (response.ok) {
-        console.log('Email enviado con éxito');
-      }
-    } catch (error) {
-      console.log('Email enviado (o no disponible en desarrollo)');
-    }
-
-    // Abrir WhatsApp
     const numeroLimpio = GESTOR_CONFIG.whatsapp.replace(/\D/g, '');
     const urlWhatsApp = `https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`;
     
     window.open(urlWhatsApp, '_blank');
     setShowSuccess(true);
-    setEnviando(false);
     setTimeout(() => setShowSuccess(false), 3000);
   };
 
@@ -334,8 +213,12 @@ Quiero agendar una consulta.`;
       minHeight: '100vh', 
       background: COLORES.bg, 
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-      color: COLORES.gris_oscuro
+      color: COLORES.gris_oscuro,
+      paddingBottom: '40px'
     }}>
+      
+      {/* Script Lineicons */}
+      <script src="https://cdn.lineicons.com/web/1.0.0/lineicons.js"></script>
 
       {/* Navbar con Glass effect */}
       <nav style={{
@@ -359,10 +242,17 @@ Quiero agendar una consulta.`;
           <div style={{ 
             fontSize: '16px', 
             fontWeight: '700', 
-            letterSpacing: '0.5px'
+            letterSpacing: '0.5px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
           }}>
-            <span style={{ color: COLORES.rojo }}>PARAGUAY</span>{' '}
-            <span style={{ color: COLORES.navy }}>MIGRACIONES</span>
+            <i style={{ fontSize: '20px', color: COLORES.rojo }} className="lni lni-passport"></i>
+            <span>
+              <span style={{ color: COLORES.rojo }}>PARAGUAY</span>
+              <br style={{ display: 'none' }} />
+              <span style={{ color: COLORES.navy }}> MIGRACIONES</span>
+            </span>
           </div>
           <div style={{ 
             fontSize: '11px', 
@@ -382,8 +272,7 @@ Quiero agendar una consulta.`;
       <main style={{
         maxWidth: '900px',
         margin: '0 auto',
-        padding: '32px 16px',
-        paddingBottom: '120px'
+        padding: '32px 16px 48px 16px',
       }}>
         
         {/* Header con animación */}
@@ -463,8 +352,12 @@ Quiero agendar una consulta.`;
               color: COLORES.gris_oscuro,
               margin: '0 0 24px 0',
               paddingBottom: '12px',
-              borderBottom: `2px solid ${COLORES.gris_claro}`
+              borderBottom: `2px solid ${COLORES.gris_claro}`,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px'
             }}>
+              <i style={{ fontSize: '24px', color: COLORES.navy }} className="lni lni-user"></i>
               Datos Personales
             </h2>
 
@@ -614,8 +507,7 @@ Quiero agendar una consulta.`;
             <div style={{ 
               display: 'grid', 
               gridTemplateColumns: '1fr',
-              gap: '20px',
-              '@media (min-width: 640px)': { gridTemplateColumns: '150px 1fr' }
+              gap: '20px'
             }}>
               <div style={{ animation: 'fadeInUp 0.6s ease-out 0.6s both' }}>
                 <label style={{ 
@@ -634,21 +526,20 @@ Quiero agendar una consulta.`;
                   name="edad"
                   value={formData.edad}
                   onChange={handleInputChange}
-                  placeholder="XX"
+                  placeholder="Tu edad"
                   min="0"
                   max="120"
                   style={{
                     width: '100%',
-                    padding: '12px 14px',
-                    minHeight: '44px',
+                    padding: '14px 16px',
+                    minHeight: '48px',
                     border: `1.5px solid #e0e0e0`,
                     borderRadius: '12px',
                     fontSize: '16px',
                     fontFamily: 'inherit',
                     boxSizing: 'border-box',
                     transition: 'all 0.3s ease',
-                    background: '#fafbfc',
-                    textAlign: 'center'
+                    background: '#fafbfc'
                   }}
                   onFocus={(e) => {
                     e.target.style.borderColor = COLORES.rojo;
@@ -681,8 +572,8 @@ Quiero agendar una consulta.`;
                   onChange={handleInputChange}
                   style={{
                     width: '100%',
-                    padding: '12px 14px',
-                    minHeight: '44px',
+                    padding: '14px 16px',
+                    minHeight: '48px',
                     border: `1.5px solid #e0e0e0`,
                     borderRadius: '12px',
                     fontSize: '16px',
@@ -726,8 +617,12 @@ Quiero agendar una consulta.`;
               fontSize: '18px',
               fontWeight: '800',
               color: COLORES.rojo,
-              margin: '0 0 24px 0'
+              margin: '0 0 24px 0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px'
             }}>
+              <i style={{ fontSize: '24px' }} className="lni lni-briefcase"></i>
               Tipo de Radicación
             </h3>
 
@@ -780,9 +675,13 @@ Quiero agendar una consulta.`;
               color: COLORES.gris_oscuro,
               margin: '0 0 24px 0',
               paddingBottom: '12px',
-              borderBottom: `2px solid ${COLORES.gris_claro}`
+              borderBottom: `2px solid ${COLORES.gris_claro}`,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px'
             }}>
-              {formData.carnetTemporal ? 'Documentos Permanente' : 'Documentos Requeridos'}
+              <i style={{ fontSize: '24px', color: COLORES.verde }} className="lni lni-files"></i>
+              {formData.carnetTemporal ? 'Docs. Permanente' : 'Documentos Requeridos'}
             </h2>
 
             <div style={{ 
@@ -798,6 +697,8 @@ Quiero agendar una consulta.`;
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   cursor: 'pointer',
                   background: '#ffffff',
+                  position: 'relative',
+                  overflow: 'hidden',
                   animation: `fadeInUp 0.6s ease-out ${0.9 + idx * 0.05}s both`
                 }}
                 onMouseEnter={(e) => {
@@ -813,13 +714,24 @@ Quiero agendar una consulta.`;
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
                 >
-                  {/* Encabezado del documento */}
-                  <label style={{ cursor: 'pointer' }}>
+                  {/* Icon Badge */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '-8px',
+                    right: '-8px',
+                    fontSize: '48px',
+                    opacity: 0.1,
+                    pointerEvents: 'none'
+                  }}>
+                    {doc.icon}
+                  </div>
+
+                  <label style={{ cursor: 'pointer', position: 'relative', zIndex: 1 }}>
                     <div style={{
                       display: 'flex',
                       alignItems: 'flex-start',
                       gap: '12px',
-                      marginBottom: '16px'
+                      marginBottom: '10px'
                     }}>
                       <input
                         type="checkbox"
@@ -835,7 +747,7 @@ Quiero agendar una consulta.`;
                           accentColor: COLORES.verde
                         }}
                       />
-                      <div style={{ flex: 1 }}>
+                      <div>
                         <div style={{
                           fontWeight: '700',
                           fontSize: '15px',
@@ -855,103 +767,46 @@ Quiero agendar una consulta.`;
                     </div>
                   </label>
 
-                  {/* Zona de carga de archivos */}
                   {formData.documentos[doc.key] && (
-                    <div>
-                      {doc.hasDosCaras ? (
-                        // Dos columnas para Frente y Dorso
+                    <div style={{
+                      marginTop: '14px',
+                      padding: '12px 14px',
+                      background: `linear-gradient(135deg, #E8F5E9, #F1F8E9)`,
+                      borderRadius: '12px',
+                      border: `1.5px dashed ${COLORES.verde}`,
+                      animation: 'slideIn 0.3s ease-out'
+                    }}>
+                      <label style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        cursor: 'pointer',
+                        color: '#2E7D32',
+                        fontSize: '13px',
+                        fontWeight: '600'
+                      }}>
+                        <i style={{ fontSize: '16px' }} className="lni lni-cloud-upload"></i>
+                        {formData.archivos[doc.key] ? '✓ Archivo cargado' : 'Cargar archivo'}
+                        <input
+                          type="file"
+                          accept={doc.accept}
+                          onChange={(e) => handleFileUpload(e, doc.key)}
+                          style={{ display: 'none' }}
+                        />
+                      </label>
+                      {formData.archivos[doc.key] && (
                         <div style={{
-                          display: 'grid',
-                          gridTemplateColumns: '1fr 1fr',
-                          gap: '12px'
+                          fontSize: '12px',
+                          color: '#2E7D32',
+                          marginTop: '8px',
+                          fontWeight: '600',
+                          wordBreak: 'break-word',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px'
                         }}>
-                          {['frente', 'dorso'].map((lado) => (
-                            <div key={lado} style={{
-                              padding: '12px 14px',
-                              background: `linear-gradient(135deg, #E8F5E9, #F1F8E9)`,
-                              borderRadius: '12px',
-                              border: `1.5px dashed ${COLORES.verde}`,
-                              animation: 'slideIn 0.3s ease-out'
-                            }}>
-                              <label style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                cursor: 'pointer',
-                                color: '#2E7D32',
-                                fontSize: '12px',
-                                fontWeight: '600'
-                              }}>
-                                <span style={{ textTransform: 'capitalize', fontWeight: '700' }}>
-                                  📄 {lado}
-                                </span>
-                                <input
-                                  type="file"
-                                  accept={doc.accept}
-                                  onChange={(e) => handleFileUpload(e, `${doc.key}_${lado}`)}
-                                  style={{ display: 'none' }}
-                                />
-                              </label>
-                              {formData.archivos[`${doc.key}_${lado}`]?.length > 0 && (
-                                <div style={{
-                                  fontSize: '11px',
-                                  color: '#2E7D32',
-                                  marginTop: '6px',
-                                  fontWeight: '600',
-                                  wordBreak: 'break-word'
-                                }}>
-                                  ✓ {formData.archivos[`${doc.key}_${lado}`][0].name}
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        // Un solo input
-                        <div style={{
-                          padding: '12px 14px',
-                          background: `linear-gradient(135deg, #E8F5E9, #F1F8E9)`,
-                          borderRadius: '12px',
-                          border: `1.5px dashed ${COLORES.verde}`,
-                          animation: 'slideIn 0.3s ease-out'
-                        }}>
-                          <label style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                            cursor: 'pointer',
-                            color: '#2E7D32',
-                            fontSize: '13px',
-                            fontWeight: '600'
-                          }}>
-                            {formData.archivos[doc.key]?.length > 0 ? `✓ ${formData.archivos[doc.key].length} archivo(s)` : 'Cargar archivo'}
-                            <input
-                              type="file"
-                              accept={doc.accept}
-                              onChange={(e) => handleFileUpload(e, doc.key)}
-                              multiple={doc.multiple}
-                              style={{ display: 'none' }}
-                            />
-                          </label>
-                          {formData.archivos[doc.key]?.length > 0 && (
-                            <div style={{
-                              fontSize: '12px',
-                              color: '#2E7D32',
-                              marginTop: '8px',
-                              fontWeight: '600'
-                            }}>
-                              {formData.archivos[doc.key].map((file, idx) => (
-                                <div key={idx} style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '6px',
-                                  marginBottom: idx < formData.archivos[doc.key].length - 1 ? '4px' : '0'
-                                }}>
-                                  ✓ {file.name}
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                          <i style={{ fontSize: '14px' }} className="lni lni-checkmark-circle"></i>
+                          {formData.archivos[doc.key].name}
                         </div>
                       )}
                     </div>
@@ -975,8 +830,12 @@ Quiero agendar una consulta.`;
                 fontSize: '15px',
                 fontWeight: '800',
                 color: '#856404',
-                margin: '0 0 12px 0'
+                margin: '0 0 12px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
               }}>
+                <i style={{ fontSize: '18px' }} className="lni lni-warning"></i>
                 Información Importante
               </h3>
               {advertencias.map((adv, idx) => (
@@ -1006,7 +865,12 @@ Quiero agendar una consulta.`;
             fontWeight: '500',
             animation: 'fadeInUp 0.6s ease-out 0.1s both'
           }}>
-            <strong>Nota Importante:</strong> La emisión del carnet tarda entre 60-90 días hábiles. La cédula paraguaya se gestiona después y tarda aprox. 45 días adicionales.
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <i style={{ fontSize: '16px', minWidth: '16px' }} className="lni lni-info"></i>
+              <div>
+                <strong>Nota Importante:</strong> La emisión del carnet tarda entre 60-90 días hábiles. La cédula paraguaya se gestiona después y tarda aprox. 45 días adicionales.
+              </div>
+            </div>
           </div>
 
           {/* Clasificación */}
@@ -1036,9 +900,13 @@ Quiero agendar una consulta.`;
                 </div>
                 <div style={{
                   fontSize: '20px',
-                  fontWeight: '800'
+                  fontWeight: '800',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px'
                 }}>
-                  {clasificacion}
+                  <i style={{ fontSize: '24px', color: COLORES.verde }} className="lni lni-checkmark-circle"></i>
+                  <span>{clasificacion}</span>
                 </div>
               </div>
               {aranceles && (
@@ -1065,54 +933,15 @@ Quiero agendar una consulta.`;
             </div>
           )}
 
-          <div style={{ height: '40px' }}></div>
-        </div>
-
-        {/* Footer */}
-        <div style={{
-          textAlign: 'center',
-          color: COLORES.gris_medio,
-          fontSize: '12px',
-          paddingTop: '24px',
-          borderTop: '1px solid rgba(0,0,0,0.08)',
-          marginBottom: '40px'
-        }}>
-          <p style={{ margin: '0 0 8px 0', fontWeight: '600' }}>© 2026 Abraham Kohan</p>
-          <p style={{ margin: 0, fontSize: '11px', opacity: '0.7' }}>
-            Evaluación informativa basada en Ley Nº 6984/22
-          </p>
-        </div>
-      </main>
-
-      {/* Fixed Button */}
-      <div style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        background: '#ffffff',
-        boxShadow: '0 -4px 12px rgba(0,0,0,0.08)',
-        paddingTop: '16px',
-        paddingBottom: `calc(16px + env(safe-area-inset-bottom))`,
-        zIndex: 99,
-        paddingLeft: '16px',
-        paddingRight: '16px'
-      }}>
-        <div style={{
-          maxWidth: '900px',
-          margin: '0 auto',
-          display: 'flex',
-          justifyContent: 'center'
-        }}>
+          {/* Botón WhatsApp - iOS Style */}
           <button
             onClick={generarMensajeWhatsApp}
-            disabled={!formularioCompleto || enviando}
+            disabled={!formularioCompleto}
             style={{
               width: '100%',
-              maxWidth: '520px',
               minHeight: '56px',
               padding: '16px 20px',
-              background: formularioCompleto && !enviando
+              background: formularioCompleto 
                 ? `linear-gradient(135deg, ${COLORES.verde}, #229954)`
                 : '#e0e0e0',
               color: 'white',
@@ -1120,70 +949,91 @@ Quiero agendar una consulta.`;
               borderRadius: '14px',
               fontSize: '16px',
               fontWeight: '800',
-              cursor: formularioCompleto && !enviando ? 'pointer' : 'not-allowed',
+              cursor: formularioCompleto ? 'pointer' : 'not-allowed',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '10px',
               transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               letterSpacing: '0.3px',
-              boxShadow: formularioCompleto && !enviando
+              boxShadow: formularioCompleto 
                 ? '0 8px 24px rgba(39, 174, 96, 0.3)' 
-                : 'none'
+                : 'none',
+              animation: 'fadeInUp 0.6s ease-out 0.3s both'
             }}
             onMouseEnter={(e) => {
-              if (formularioCompleto && !enviando) {
+              if (formularioCompleto) {
                 e.target.style.transform = 'translateY(-4px)';
                 e.target.style.boxShadow = '0 12px 32px rgba(39, 174, 96, 0.4)';
               }
             }}
             onMouseLeave={(e) => {
-              if (formularioCompleto && !enviando) {
+              if (formularioCompleto) {
                 e.target.style.transform = 'translateY(0)';
                 e.target.style.boxShadow = '0 8px 24px rgba(39, 174, 96, 0.3)';
               }
             }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 48 48">
-              <path fill="#fff" d="M4.9,43.3l2.7-9.8C5.9,30.6,5,27.3,5,24C5,13.5,13.5,5,24,5c5.1,0,9.8,2,13.4,5.6C41,14.2,43,18.9,43,24c0,10.5-8.5,19-19,19c0,0,0,0,0,0h0c-3.2,0-6.3-0.8-9.1-2.3L4.9,43.3z"></path>
-              <path fill="#40c351" d="M35.2,12.8c-3-3-6.9-4.6-11.2-4.6C15.3,8.2,8.2,15.3,8.2,24c0,3,0.8,5.9,2.4,8.4L11,33l-1.6,5.8l6-1.6l0.6,0.3c2.4,1.4,5.2,2.2,8,2.2h0c8.7,0,15.8-7.1,15.8-15.8C39.8,19.8,38.2,15.8,35.2,12.8z"></path>
-              <path fill="#fff" fillRule="evenodd" d="M19.3,16c-0.4-0.8-0.7-0.8-1.1-0.8c-0.3,0-0.6,0-0.9,0s-0.8,0.1-1.3,0.6c-0.4,0.5-1.7,1.6-1.7,4s1.7,4.6,1.9,4.9s3.3,5.3,8.1,7.2c4,1.6,4.8,1.3,5.7,1.2c0.9-0.1,2.8-1.1,3.2-2.3c0.4-1.1,0.4-2.1,0.3-2.3c-0.1-0.2-0.4-0.3-0.9-0.6s-2.8-1.4-3.2-1.5c-0.4-0.2-0.8-0.2-1.1,0.2c-0.3,0.5-1.2,1.5-1.5,1.9c-0.3,0.3-0.6,0.4-1,0.1c-0.5-0.2-2-0.7-3.8-2.4c-1.4-1.3-2.4-2.8-2.6-3.3c-0.3-0.5,0-0.7,0.2-1c0.2-0.2,0.5-0.6,0.7-0.8c0.2-0.3,0.3-0.5,0.5-0.8c0.2-0.3,0.1-0.6,0-0.8C20.6,19.3,19.7,17,19.3,16z" clipRule="evenodd"></path>
-            </svg>
-            {enviando ? 'Enviando...' : 'Enviar Formulario'}
+            <i style={{ fontSize: '18px' }} className="lni lni-whatsapp"></i>
+            Enviar a mi Gestor por WhatsApp
           </button>
-        </div>
-      </div>
 
-      {/* Success Message */}
-      {showSuccess && (
-        <div style={{
-          position: 'fixed',
-          bottom: '100px',
-          left: '16px',
-          right: '16px',
-          background: `linear-gradient(135deg, ${COLORES.verde}, #229954)`,
-          color: 'white',
-          padding: '16px 20px',
-          borderRadius: '14px',
-          fontSize: '14px',
-          fontWeight: '700',
-          boxShadow: '0 12px 40px rgba(39, 174, 96, 0.3)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
-          animation: 'slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
-          maxWidth: '520px',
-          zIndex: 1000,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: 'calc(100% - 32px)'
-        }}>
-          <div>
-            <strong>¡Mensaje enviado!</strong>
-            <div style={{ fontSize: '12px', opacity: '0.9' }}>Revisa tu WhatsApp ahora</div>
+          <div style={{
+            fontSize: '12px',
+            color: COLORES.gris_medio,
+            textAlign: 'center',
+            marginTop: '14px',
+            fontWeight: '500'
+          }}>
+            {formularioCompleto ? '✓ Listo para enviar' : 'Completa todos los campos requeridos'}
           </div>
         </div>
-      )}
+
+        {/* Success Message */}
+        {showSuccess && (
+          <div style={{
+            position: 'fixed',
+            bottom: '24px',
+            left: '16px',
+            right: '16px',
+            background: `linear-gradient(135deg, ${COLORES.verde}, #229954)`,
+            color: 'white',
+            padding: '16px 20px',
+            borderRadius: '14px',
+            fontSize: '14px',
+            fontWeight: '700',
+            boxShadow: '0 12px 40px rgba(39, 174, 96, 0.3)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            animation: 'slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            maxWidth: '600px',
+            margin: '0 auto',
+            zIndex: 1000
+          }}>
+            <i style={{ fontSize: '20px', minWidth: '20px' }} className="lni lni-checkmark-circle"></i>
+            <div>
+              <strong>¡Mensaje enviado!</strong>
+              <div style={{ fontSize: '12px', opacity: '0.9' }}>Revisa tu WhatsApp ahora</div>
+            </div>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div style={{
+          textAlign: 'center',
+          color: COLORES.gris_medio,
+          fontSize: '12px',
+          marginTop: '48px',
+          paddingTop: '24px',
+          borderTop: '1px solid #e0e0e0'
+        }}>
+          <p style={{ margin: '0 0 8px 0', fontWeight: '600' }}>© 2025 Paraguay Migraciones</p>
+          <p style={{ margin: 0, fontSize: '11px', opacity: '0.7' }}>
+            Evaluación informativa basada en Ley Nº 6984/22
+          </p>
+        </div>
+      </main>
 
       <style>{`
         @keyframes fadeInDown {
@@ -1211,11 +1061,11 @@ Quiero agendar una consulta.`;
         @keyframes slideUp {
           from {
             opacity: 0;
-            transform: translateX(-50%) translateY(100px);
+            transform: translateY(100px);
           }
           to {
             opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            transform: translateY(0);
           }
         }
         
