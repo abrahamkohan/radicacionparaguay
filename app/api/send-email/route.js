@@ -24,15 +24,34 @@ export async function POST(request) {
     const attachments = [];
     const entries = Array.from(formData.entries());
     
+    console.log(`📧 Procesando ${entries.length} campos del formulario`);
+    
     for (const [key, value] of entries) {
       if (key.startsWith('archivo_') && value instanceof File) {
-        const bytes = await value.arrayBuffer();
-        attachments.push({
-          filename: value.name,
-          content: Buffer.from(bytes)
-        });
+        try {
+          const bytes = await value.arrayBuffer();
+          const buffer = Buffer.from(bytes);
+          
+          // Limitar tamaño a 5MB por archivo
+          if (buffer.length > 5 * 1024 * 1024) {
+            console.warn(`⚠️ Archivo ${value.name} es muy grande (${(buffer.length / 1024 / 1024).toFixed(2)}MB), omitiendo`);
+            continue;
+          }
+          
+          attachments.push({
+            filename: value.name,
+            content: buffer,
+            contentType: value.type
+          });
+          
+          console.log(`✓ Archivo adjunto: ${value.name} (${(buffer.length / 1024).toFixed(2)}KB)`);
+        } catch (err) {
+          console.error(`✗ Error procesando ${value.name}:`, err.message);
+        }
       }
     }
+
+    console.log(`📎 Total de archivos a enviar: ${attachments.length}`);
 
     // HTML del email
     const htmlContent = `
@@ -49,7 +68,7 @@ export async function POST(request) {
         <div style="background: white; padding: 40px 28px; border-radius: 0 0 12px 12px; border: 1px solid #e0e0e0; border-top: none;">
           
           <h1 style="color: #2c3e50; font-size: 24px; font-weight: 800; margin: 0 0 8px 0;">Evaluación Completada</h1>
-          <p style="color: #999; font-size: 14px; margin: 0 0 32px 0;">Tu formulario ha sido recibido</p>
+          <p style="color: #999; font-size: 14px; margin: 0 0 32px 0;">Tu formulario ha sido recibido correctamente</p>
 
           <div style="margin-bottom: 32px;">
             <h2 style="color: #0066CC; font-size: 16px; font-weight: 800; margin: 0 0 16px 0; padding-bottom: 8px; border-bottom: 2px solid #f5f5f5;">📋 Datos Personales</h2>
@@ -88,27 +107,32 @@ export async function POST(request) {
             <h2 style="color: #0066CC; font-size: 16px; font-weight: 800; margin: 0 0 16px 0; padding-bottom: 8px; border-bottom: 2px solid #f5f5f5;">📄 Documentos Adjuntos</h2>
             ${attachments.length > 0 
               ? `<div style="background: linear-gradient(135deg, #E8F5E9, #F1F8E9); border-left: 4px solid #27AE60; padding: 16px; border-radius: 8px;">
-                  <p style="margin: 0 0 12px 0; font-weight: 700; color: #2E7D32;">✓ ${attachments.length} archivo(s) adjunto(s)</p>
+                  <p style="margin: 0 0 12px 0; font-weight: 700; color: #2E7D32;">✓ ${attachments.length} archivo(s) adjunto(s):</p>
+                  <ul style="margin: 0; padding-left: 20px; color: #2c3e50; font-size: 13px;">
+                    ${attachments.map(att => `<li style="color: #2E7D32; font-weight: 500;">${att.filename}</li>`).join('')}
+                  </ul>
                 </div>`
-              : '<div style="background: #FFF3CD; border-left: 4px solid #ffc107; padding: 16px; border-radius: 8px; color: #856404;">⚠️ Sin documentos adjuntos</div>'
+              : '<div style="background: #FFF3CD; border-left: 4px solid #ffc107; padding: 16px; border-radius: 8px; color: #856404; font-weight: 600;">⚠️ Sin documentos adjuntos</div>'
             }
           </div>
 
           <div style="background: linear-gradient(135deg, #E3F2FD, #E1F5FE); border-left: 4px solid #0066CC; padding: 16px; border-radius: 8px;">
             <p style="margin: 0; font-size: 12px; color: #1565C0; font-weight: 500;">
-              <strong>Próximos pasos:</strong> Pronto te contactaremos por WhatsApp para confirmar los documentos.
+              <strong>Próximos pasos:</strong> Pronto nos contactaremos por WhatsApp para confirmar los documentos y agendar tu consulta.
             </p>
           </div>
         </div>
 
         <div style="text-align: center; padding: 20px; font-size: 12px; color: #999;">
           <p style="margin: 0 0 4px 0; font-weight: 700;">© 2026 Abraham Kohan</p>
-          <p style="margin: 0; font-size: 11px;">Paraguay Migraciones</p>
+          <p style="margin: 0; font-size: 11px;">Paraguay Migraciones | Gestor Migratorio Independiente</p>
         </div>
       </div>
     `;
 
-    await transporter.sendMail({
+    console.log(`📤 Enviando email a ${process.env.GMAIL_USER}...`);
+
+    const result = await transporter.sendMail({
       from: process.env.GMAIL_USER,
       to: 'abrahamkohan.py@gmail.com',
       subject: `Nueva Evaluación: ${nombre} - ${nacionalidad}`,
@@ -116,13 +140,15 @@ export async function POST(request) {
       attachments: attachments.length > 0 ? attachments : undefined
     });
 
+    console.log(`✅ Email enviado exitosamente:`, result.messageId);
+
     return NextResponse.json(
-      { success: true, message: 'Email enviado correctamente' },
+      { success: true, message: 'Email enviado correctamente', attachments: attachments.length },
       { status: 200 }
     );
 
   } catch (error) {
-    console.error('Error al enviar email:', error);
+    console.error('❌ Error al enviar email:', error);
     return NextResponse.json(
       { success: false, message: 'Error al enviar el email', error: error.message },
       { status: 500 }
