@@ -594,7 +594,7 @@ Quiero agendar una consulta.`;
                   padding: '20px',
                   background: '#ffffff'
                 }}>
-                  <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '700', color: COLORES.gris_oscuro' }}>
+                  <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '700', color: COLORES.gris_oscuro }}>
                     {doc.label}
                   </h3>
                   <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: COLORES.gris_medio }}>
