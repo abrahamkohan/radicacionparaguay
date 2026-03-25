@@ -1,27 +1,30 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'Radicación Paraguaya - Ley Nº 6984/22',
-  description: 'Somos líderes en la gestión de todo tipo de trámites vinculados con la residencia en Paraguay, con testimonios de miles de personas de todo el mundo.',
+  title: 'Radicación en Paraguay - Ley Nº 6984/22',
+  description: 'Asesoramiento profesional para tu residencia en Paraguay.',
+
   openGraph: {
-    title: 'Radicación Paraguaya - Ley Nº 6984/22',
-    description: 'Evaluación de radicación con seguridad jurídica.',
-    url: 'https://abrahamkohan.com.py',
-    siteName: 'Radicación en Paraguay',
+    title: 'Radicación en Paraguay - Ley Nº 6984/22',
+    description: 'Asesoramiento profesional para tu residencia en Paraguay.',
+    url: 'https://abrahamkohan.com.py',   
+    siteName: 'Radicación Paraguay',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
+        alt: 'Radicación en Paraguay - Evaluación migratoria',
       },
     ],
     locale: 'es_PY',
     type: 'website',
   },
+
   twitter: {
     card: 'summary_large_image',
-    title: 'Radicación Paraguay',
-    description: 'Evaluación migratoria en Paraguay',
+    title: 'Radicación en Paraguay',
+    description: 'Evaluación migratoria y documentación requerida en Paraguay',
     images: ['/og-image.jpg'],
   },
 }
@@ -34,7 +37,13 @@ export default function RootLayout({ children }) {
       <head>
         <meta charSet="utf-8" />
       </head>
-      <body style={{ margin: 0, padding: 0, fontFamily: "'Segoe UI', 'Helvetica Neue', sans-serif" }}>
+      <body
+        style={{
+          margin: 0,
+          padding: 0,
+          fontFamily: "'Segoe UI', 'Helvetica Neue', sans-serif",
+        }}
+      >
         {children}
       </body>
     </html>
