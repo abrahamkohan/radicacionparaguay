@@ -31,66 +31,92 @@ export async function POST(request) {
       }
     }
 
-    // Construir HTML del email
+    // Construir HTML del email con headers alineados a WhatsApp
     const htmlContent = `
-      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; color: #2c3e50;">
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 700px; margin: 0 auto; background: #e6e8eb; padding: 16px;">
         
-        <div style="background: linear-gradient(135deg, #0066CC, #1a3a52); color: white; padding: 40px 20px; text-align: center; border-radius: 12px 12px 0 0;">
-          <h1 style="margin: 0; font-size: 28px; font-weight: 800;">Nueva Evaluación de Radicación</h1>
-          <p style="margin: 8px 0 0 0; opacity: 0.9;">Formulario completado</p>
+        <!-- Navbar con PARAGUAY MIGRACIONES -->
+        <div style="background: white; padding: 20px; border-radius: 12px 12px 0 0; border-bottom: 2px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">
+            <span style="color: #0066CC;">PARAGUAY</span> 
+            <span style="color: #1a3a52;">MIGRACIONES</span>
+          </div>
+          <div style="font-size: 11px; color: #999; font-weight: 700; background: rgba(0, 102, 204, 0.1); padding: 6px 12px; border-radius: 12px;">Ley Nº 6984/22</div>
         </div>
 
-        <div style="background: white; padding: 40px 20px; border: 1px solid #e0e0e0; border-top: none;">
+        <!-- Card Principal -->
+        <div style="background: white; padding: 40px 28px; border-radius: 0 0 12px 12px; border: 1px solid #e0e0e0; border-top: none;">
           
-          <h2 style="color: #0066CC; font-size: 18px; margin: 0 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid #f5f5f5;">📋 Datos Personales</h2>
-          <table style="width: 100%; margin-bottom: 30px; border-collapse: collapse;">
-            <tr>
-              <td style="padding: 8px 0; font-weight: 600; color: #666; width: 30%;">Nombre:</td>
-              <td style="padding: 8px 0; color: #2c3e50;">${nombre}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; font-weight: 600; color: #666;">Nacionalidad:</td>
-              <td style="padding: 8px 0; color: #2c3e50;">${nacionalidad}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; font-weight: 600; color: #666;">País de Residencia:</td>
-              <td style="padding: 8px 0; color: #2c3e50;">${paisResidencia}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; font-weight: 600; color: #666;">Edad:</td>
-              <td style="padding: 8px 0; color: #2c3e50;">${edad} años</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; font-weight: 600; color: #666;">Estado Civil:</td>
-              <td style="padding: 8px 0; color: #2c3e50;">${estadoCivil}</td>
-            </tr>
-          </table>
+          <h1 style="color: #2c3e50; font-size: 24px; font-weight: 800; margin: 0 0 8px 0; letter-spacing: -0.5px;">Evaluación Completada</h1>
+          <p style="color: #999; font-size: 14px; margin: 0 0 32px 0; font-weight: 500;">Tu formulario ha sido recibido correctamente</p>
 
-          <h2 style="color: #0066CC; font-size: 18px; margin: 0 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid #f5f5f5;">🏛️ Clasificación</h2>
-          <div style="background: linear-gradient(135deg, #E8F0FF, #F1F8E9); padding: 16px; border-radius: 8px; margin-bottom: 30px; border-left: 4px solid #0066CC;">
-            <p style="margin: 0; font-weight: 700; color: #0066CC; font-size: 16px;">${clasificacion}</p>
-            ${aranceles ? `<p style="margin: 8px 0 0 0; font-size: 14px; color: #666;">Arancel: ${aranceles}</p>` : ''}
+          <!-- Datos Personales - MISMO EMOJI QUE WHATSAPP -->
+          <div style="margin-bottom: 32px;">
+            <h2 style="color: #0066CC; font-size: 16px; font-weight: 800; margin: 0 0 16px 0; padding-bottom: 8px; border-bottom: 2px solid #f5f5f5; display: flex; align-items: center; gap: 8px;">📋 Datos Personales</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 10px 0; font-weight: 700; color: #1a3a52; width: 35%;">Nombre</td>
+                <td style="padding: 10px 0; color: #2c3e50;">${nombre}</td>
+              </tr>
+              <tr style="background: #fafbfc;">
+                <td style="padding: 10px 0; font-weight: 700; color: #1a3a52;">Nacionalidad</td>
+                <td style="padding: 10px 0; color: #2c3e50;">${nacionalidad}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; font-weight: 700; color: #1a3a52;">País de Residencia</td>
+                <td style="padding: 10px 0; color: #2c3e50;">${paisResidencia}</td>
+              </tr>
+              <tr style="background: #fafbfc;">
+                <td style="padding: 10px 0; font-weight: 700; color: #1a3a52;">Edad</td>
+                <td style="padding: 10px 0; color: #2c3e50;">${edad} años</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; font-weight: 700; color: #1a3a52;">Estado Civil</td>
+                <td style="padding: 10px 0; color: #2c3e50;">${estadoCivil}</td>
+              </tr>
+            </table>
           </div>
 
-          <h2 style="color: #0066CC; font-size: 18px; margin: 0 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid #f5f5f5;">📄 Documentos Adjuntos</h2>
-          ${attachments.length > 0 
-            ? `<ul style="margin: 0 0 30px 0; padding-left: 20px; color: #2c3e50;">
-                ${attachments.map(att => `<li style="margin-bottom: 6px;">${att.filename}</li>`).join('')}
-              </ul>`
-            : '<p style="color: #999; margin-bottom: 30px;">No se adjuntaron documentos</p>'
-          }
+          <!-- Clasificación - MISMO EMOJI QUE WHATSAPP -->
+          <div style="margin-bottom: 32px;">
+            <h2 style="color: #0066CC; font-size: 16px; font-weight: 800; margin: 0 0 16px 0; padding-bottom: 8px; border-bottom: 2px solid #f5f5f5; display: flex; align-items: center; gap: 8px;">🏛️ Clasificación de Trámite</h2>
+            <div style="background: linear-gradient(135deg, #1a3a52, #2c3e50); color: white; padding: 20px 16px; border-radius: 12px; border-left: 4px solid #27AE60;">
+              <p style="margin: 0; font-weight: 800; font-size: 18px; letter-spacing: -0.3px;">${clasificacion}</p>
+              ${aranceles ? `<p style="margin: 12px 0 0 0; font-size: 14px; opacity: 0.85; font-weight: 600;">💰 Arancel Estimado: ${aranceles}</p>` : ''}
+            </div>
+          </div>
 
-          <div style="background: #f9f9f9; padding: 16px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #27AE60;">
-            <p style="margin: 0; font-size: 12px; color: #666; line-height: 1.6;">
-              <strong>Nota:</strong> Este correo contiene toda la información del formulario completado. Los documentos están adjuntos para su revisión.
+          <!-- Documentos - MISMO EMOJI QUE WHATSAPP -->
+          <div style="margin-bottom: 32px;">
+            <h2 style="color: #0066CC; font-size: 16px; font-weight: 800; margin: 0 0 16px 0; padding-bottom: 8px; border-bottom: 2px solid #f5f5f5; display: flex; align-items: center; gap: 8px;">📄 Documentos Adjuntos</h2>
+            ${attachments.length > 0 
+              ? `<div style="background: linear-gradient(135deg, #E8F5E9, #F1F8E9); border-left: 4px solid #27AE60; padding: 16px; border-radius: 8px;">
+                  <p style="margin: 0 0 12px 0; font-weight: 700; color: #2E7D32; font-size: 14px;">✓ Se recibieron ${attachments.length} archivo(s):</p>
+                  <ul style="margin: 0; padding-left: 20px; color: #2c3e50; font-size: 13px; line-height: 1.8;">
+                    ${attachments.map(att => `<li style="color: #2E7D32; font-weight: 500;">${att.filename}</li>`).join('')}
+                  </ul>
+                </div>`
+              : '<div style="background: #FFF3CD; border-left: 4px solid #ffc107; padding: 16px; border-radius: 8px; color: #856404; font-weight: 600; font-size: 13px;">⚠️ No se adjuntaron documentos</div>'
+            }
+          </div>
+
+          <!-- Nota importante -->
+          <div style="background: linear-gradient(135deg, #E3F2FD, #E1F5FE); border-left: 4px solid #0066CC; padding: 16px; border-radius: 8px; margin-bottom: 32px;">
+            <p style="margin: 0; font-size: 12px; color: #1565C0; line-height: 1.6; font-weight: 500;">
+              <strong>Próximos pasos:</strong> Pronto te contactaremos por WhatsApp para confirmar los documentos y agendar tu consulta. La emisión del carnet tarda entre 60-90 días hábiles.
             </p>
           </div>
 
+          <!-- CTA -->
+          <div style="text-align: center; padding: 20px; background: #fafbfc; border-radius: 12px; margin-bottom: 0;">
+            <p style="margin: 0; font-size: 13px; color: #666; font-weight: 600;">¿Preguntas? Revisa tu WhatsApp para continuar la conversación</p>
+          </div>
         </div>
 
-        <div style="background: #f5f5f5; padding: 20px; text-align: center; border-radius: 0 0 12px 12px; font-size: 12px; color: #999;">
-          <p style="margin: 0;">© 2026 Abraham Kohan - Gestor Migratorio</p>
-          <p style="margin: 4px 0 0 0;">Paraguay Migraciones</p>
+        <!-- Footer -->
+        <div style="text-align: center; padding: 20px; font-size: 12px; color: #999;">
+          <p style="margin: 0 0 4px 0; font-weight: 700;">© 2026 Abraham Kohan</p>
+          <p style="margin: 0; font-size: 11px;">Paraguay Migraciones | Gestor Migratorio Independiente</p>
         </div>
 
       </div>
